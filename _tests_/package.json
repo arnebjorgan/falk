@@ -1,0 +1,27 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:memory": "nodemon index.js memory",
+    "dev:mongodb": "nodemon index.js mongodb",
+    "dev:auth.public": "nodemon auth.public.js",
+    "dev:auth.apiKey": "nodemon auth.apiKey.js",
+    "dev:auth.jwt": "nodemon auth.jwt.js",
+    "test:integration:crud": "jest integration.crud.test.js",
+    "test:integration:auth:public": "jest integration.auth.public.test.js",
+    "test:integration:auth:apiKey": "jest integration.auth.apiKey.test.js",
+    "test:integration:auth:jwt": "jest integration.auth.jwt.test.js",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0",
+    "jest": "^27.3.1",
+    "nodemon": "^2.0.15"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "bason",
+  "version": "0.1.0",
+  "description": "The easiest and fastest way to create REST compliant APIs in Node.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "crud",
+    "rest",
+    "api",
+    "json",
+    "orm"
+  ],
+  "author": "arne.bjorgan",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.6",
+    "@types/nedb": "^1.8.12",
+    "@types/swagger-ui-express": "^4.1.3",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.7",
+    "nedb": "^1.8.0",
+    "swagger-ui-express": "^4.1.6"
+  }
+}
