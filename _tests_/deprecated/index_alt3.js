@@ -1,7 +1,7 @@
-import bason from 'bason';
-const app = bason.mongodb(process.env.MONGODB_CONNECTIONSTRING);
+import falconwing from 'falconwing';
+const app = falconwing.mongodb(process.env.MONGODB_CONNECTIONSTRING);
 
-const app = bason({
+const app = falconwing({
     database: 'mongodb',
     connectionString: process.env.MONGODB_CONNECTIONSTRING,
 });

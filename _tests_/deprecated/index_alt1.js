@@ -1,6 +1,6 @@
-import bason from 'bason';
+import falconwing from 'falconwing';
 
-bason({
+falconwing({
     database: {
         type: 'mongodb',
         connectionString: process.env.MONGODB_CONNECTIONSTRING,

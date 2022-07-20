@@ -1,5 +1,5 @@
-const bason = require('../dist/index');
-const app = bason();
+const falconwing = require('../dist/index');
+const app = falconwing();
 
 app.authentication.jwt({
     secret: 'secret',

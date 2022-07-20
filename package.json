@@ -1,5 +1,5 @@
 {
-  "name": "bason",
+  "name": "falconwing",
   "version": "0.1.0",
   "description": "The easiest and fastest way to create REST compliant APIs in Node.js",
   "main": "dist/index.js",
