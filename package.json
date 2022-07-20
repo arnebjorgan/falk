@@ -8,11 +8,10 @@
     "dev": "tsc -w"
   },
   "keywords": [
-    "crud",
-    "rest",
     "api",
+    "rest",
     "json",
-    "orm"
+    "crud"
   ],
   "author": "arne.bjorgan",
   "license": "MIT",
