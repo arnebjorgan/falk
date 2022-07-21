@@ -1,5 +1,5 @@
-import falconwing from 'falconwing';
-const app = falconwing.mongodb(process.env.MONGODB_CONNECTIONSTRING);
+import falk from 'falk';
+const app = falk.mongodb(process.env.MONGODB_CONNECTIONSTRING);
 
 app.use(middleware);
 

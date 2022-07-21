@@ -1,9 +1,9 @@
-const falconwing = require('../dist/index');
+const falk = require('../dist/index');
 require('dotenv').config();
 
 const databaseType = process.argv[2];
 
-const app = falconwing();
+const app = falk();
 
 if(databaseType === 'memory') {
     app.database.memory();

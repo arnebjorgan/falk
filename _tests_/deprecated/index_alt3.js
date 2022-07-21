@@ -1,7 +1,7 @@
-import falconwing from 'falconwing';
-const app = falconwing.mongodb(process.env.MONGODB_CONNECTIONSTRING);
+import falk from 'falk';
+const app = falk.mongodb(process.env.MONGODB_CONNECTIONSTRING);
 
-const app = falconwing({
+const app = falk({
     database: 'mongodb',
     connectionString: process.env.MONGODB_CONNECTIONSTRING,
 });

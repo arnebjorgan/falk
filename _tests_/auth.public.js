@@ -1,5 +1,5 @@
-const falconwing = require('../dist/index');
-const app = falconwing();
+const falk = require('../dist/index');
+const app = falk();
 
 app.authentication.public();
 
