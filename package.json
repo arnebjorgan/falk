@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "The easiest and fastest way to create REST compliant APIs in Node.js",
   "main": "dist/index.js",
-  "types": "dist/definitions.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "prepare": "npm run build"
   },
   "keywords": [
     "api",

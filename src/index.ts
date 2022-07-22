@@ -7,7 +7,7 @@ import validateDatabaseConfiguration from './configurationValidators/validateDat
 import validateServerConfiguration from './configurationValidators/validateServerConfiguration';
 import validateAuthentication from './configurationValidators/validateAuthentication';
 
-module.exports = () : App => {
+export default () : App => {
     let databaseType = DatabaseType.MEMORY;
     let databaseConfiguration : DatabaseConfiguration;
     let authenticationType = AuthenticationType.PUBLIC;
