@@ -41,6 +41,13 @@ export type App = {
         jwt(configuration: JwtConfiguration) : void,
     },
     model(model: Model) : void,
+    endpoint: {
+        get(path : string, requestHandler : RequestHandler) : void,
+        post(path : string, requestHandler : RequestHandler) : void,
+        put(path : string, requestHandler : RequestHandler) : void,
+        patch(path : string, requestHandler : RequestHandler) : void,
+        delete(path : string, requestHandler : RequestHandler) : void,
+    },
     startServer(port?: number) : Promise<void>,
 }
 
@@ -107,7 +114,10 @@ export type DatabaseGetManyOptions = {
     sorters: DatabaseSorter[],
     _limit?: number,
     _skip?: number,
-} 
+}
+
+//@internal
+export type ManualEndpointHttpMethod = 'get'|'post'|'put'|'patch'|'delete';
 
 //@internal
 export type Database = {

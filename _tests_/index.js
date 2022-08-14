@@ -30,4 +30,24 @@ app.model({
     ],
 });
 
+app.endpoint.get('/manual-endpoint', (req, res, next) => {
+    res.send('ok');
+});
+
+app.endpoint.post('/manual-endpoint', (req, res, next) => {
+    res.send('ok');
+});
+
+app.endpoint.put('/manual-endpoint', (req, res, next) => {
+    res.send('ok');
+});
+
+app.endpoint.patch('/manual-endpoint', (req, res, next) => {
+    res.send('ok');
+});
+
+app.endpoint.delete('/manual-endpoint', (req, res, next) => {
+    res.send('ok');
+});
+
 app.startServer();

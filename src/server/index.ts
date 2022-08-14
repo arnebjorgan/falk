@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import swaggerUI from 'swagger-ui-express';
-import { Model, Database, Middleware, AuthenticationType, AuthenticationConfiguration, JwtConfiguration } from '../definitions';
+import { Model, Database, Middleware, AuthenticationType, AuthenticationConfiguration, JwtConfiguration, ManualEndpointHttpMethod } from '../definitions';
 import requestHandlers from './requestHandlers';
 import generateDocs from './generateDocs';
 
@@ -13,6 +13,7 @@ export default async (configuration: {
         configuration: AuthenticationConfiguration,
     },
     models: Model[],
+    endpoints: { method: ManualEndpointHttpMethod, path: string, requestHandler: express.RequestHandler }[],
     port: number,
 }) : Promise<void> => {
 
@@ -65,6 +66,12 @@ export default async (configuration: {
         else {
             console.info(`☑ ${model.name} - modeled in database`);
         }
+    });
+
+    // Manual endpoints
+    configuration.endpoints.forEach(endpoint => {
+        app[endpoint.method](endpoint.path, endpoint.requestHandler);
+        console.info(`☑ ${endpoint.method} ${endpoint.path} - manual endpoint registered`);
     });
 
     // Docs

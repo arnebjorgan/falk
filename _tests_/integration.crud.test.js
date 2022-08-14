@@ -683,3 +683,33 @@ test('getMany - invalid boolean nin filter', async () => {
         expect(e.response.data).toBe(`electric filter must be a boolean, was 0, electric filter must be a boolean, was 1, electric filter must be a boolean, was bar`);
     }
 });
+
+test('manual endpoint - it should return 200 ok for GET', async () => {
+    const response = await server.get('/manual-endpoint');
+    expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual('ok');
+});
+
+test('manual endpoint - it should return 200 ok for POST', async () => {
+    const response = await server.post('/manual-endpoint');
+    expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual('ok');
+});
+
+test('manual endpoint - it should return 200 ok for PUT', async () => {
+    const response = await server.put('/manual-endpoint');
+    expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual('ok');
+});
+
+test('manual endpoint - it should return 200 ok for PATCH', async () => {
+    const response = await server.patch('/manual-endpoint');
+    expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual('ok');
+});
+
+test('manual endpoint - it should return 200 ok for DELETE', async () => {
+    const response = await server.delete('/manual-endpoint');
+    expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual('ok');
+});
