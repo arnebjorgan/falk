@@ -46,6 +46,15 @@ test('docs - it should return 200 on root', async () => {
     expect(response.data).not.toBeNull();
 });
 
+test('expose - it should return 404 for non-exposed model', async () => {
+    try {
+        await server.get('/not-exposed');
+        fail('It should fail when getting a non-exposed model');
+    } catch(e) {
+        expect(e.response.status).toBe(404);
+    }
+});
+
 test('post - it should return 400 when one unknown field is sent', async () => {
     try {
         await server.post('/cars', { brand: 'foobar', foo: 123 });

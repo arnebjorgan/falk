@@ -15,6 +15,7 @@ export type Field = {
 export type Model = {
     name: string,
     fields: Field[],
+    expose?: boolean,
 }
 
 export type ApiKeyConfiguration = {

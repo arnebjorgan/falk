@@ -53,13 +53,18 @@ export default async (configuration: {
 
     // Models
     configuration.models.forEach(model => {
-        app.get(`/${model.name}/:id`, requestHandlers.getById(model, configuration.database));
-        app.get(`/${model.name}`, requestHandlers.getMany(model, configuration.database));
-        app.post(`/${model.name}`, requestHandlers.post(model, configuration.database));
-        app.put(`/${model.name}/:id`, requestHandlers.put(model, configuration.database));
-        app.patch(`/${model.name}/:id`, requestHandlers.patch(model, configuration.database));
-        app.delete(`/${model.name}/:id`, requestHandlers.del(model, configuration.database));
-        console.info(`Serving JSON schema: ${model.name} ☑`);
+        if(model.expose) {
+            app.get(`/${model.name}/:id`, requestHandlers.getById(model, configuration.database));
+            app.get(`/${model.name}`, requestHandlers.getMany(model, configuration.database));
+            app.post(`/${model.name}`, requestHandlers.post(model, configuration.database));
+            app.put(`/${model.name}/:id`, requestHandlers.put(model, configuration.database));
+            app.patch(`/${model.name}/:id`, requestHandlers.patch(model, configuration.database));
+            app.delete(`/${model.name}/:id`, requestHandlers.del(model, configuration.database));
+            console.info(`☑ ${model.name} - exposed on API`);
+        }
+        else {
+            console.info(`☑ ${model.name} - modeled in database`);
+        }
     });
 
     // Docs

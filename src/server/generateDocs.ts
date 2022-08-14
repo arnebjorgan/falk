@@ -5,7 +5,8 @@ const typeMap = {
     boolean: 'boolean',
 };
 
-export default (models: Model[]) : Object => {
+export default (allModels: Model[]) : Object => {
+    const models = allModels.filter(model => model.expose);
     return {
         swagger: '2.0',
         tags: models.map(model => model.name),

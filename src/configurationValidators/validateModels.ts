@@ -8,6 +8,7 @@ const validationSchema = Joi.array().items(
             type: Joi.string().valid('string', 'number', 'boolean').required(),
             required: Joi.boolean(),
         })).min(1).required(),
+        expose: Joi.boolean(),
     }).required()
 ).min(1);
 
