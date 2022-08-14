@@ -117,6 +117,13 @@ export type DatabaseGetManyOptions = {
 }
 
 //@internal
+export type ManualEndpoint = {
+    method: ManualEndpointHttpMethod,
+    path: string,
+    requestHandler: express.RequestHandler,
+}
+
+//@internal
 export type ManualEndpointHttpMethod = 'get'|'post'|'put'|'patch'|'delete';
 
 //@internal

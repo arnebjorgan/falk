@@ -2,11 +2,17 @@ import express from 'express';
 import createDatabase from './database';
 import createAuthentication from './authentication';
 import server from './server';
-import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, JwtConfiguration, ManualEndpointHttpMethod, Middleware, Model } from './definitions';
+import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, FieldType, JwtConfiguration, ManualEndpoint, Middleware, Model } from './definitions';
 import validateModels from './configurationValidators/validateModels';
 import validateDatabaseConfiguration from './configurationValidators/validateDatabaseConfiguration';
 import validateServerConfiguration from './configurationValidators/validateServerConfiguration';
 import validateAuthentication from './configurationValidators/validateAuthentication';
+
+export const fieldType = {
+    STRING: FieldType.STRING,
+    NUMBER: FieldType.NUMBER,
+    BOOLEAN: FieldType.BOOLEAN,
+};
 
 export default () : App => {
     let databaseType = DatabaseType.MEMORY;
@@ -14,7 +20,7 @@ export default () : App => {
     let authenticationType = AuthenticationType.PUBLIC;
     let authenticationConfiguration : AuthenticationConfiguration;
     const models : Model[] = [];
-    const endpoints : { method: ManualEndpointHttpMethod, path: string, requestHandler: express.RequestHandler }[] = [];
+    const endpoints : ManualEndpoint[] = [];
 
     return {
         database: {
@@ -68,6 +74,6 @@ export default () : App => {
                 endpoints,
                 port: finalPort,
             });
-        }
+        },
     }
 };

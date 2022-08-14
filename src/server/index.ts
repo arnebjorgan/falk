@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import swaggerUI from 'swagger-ui-express';
-import { Model, Database, Middleware, AuthenticationType, AuthenticationConfiguration, JwtConfiguration, ManualEndpointHttpMethod } from '../definitions';
+import { Model, Database, Middleware, AuthenticationType, AuthenticationConfiguration, JwtConfiguration, ManualEndpoint } from '../definitions';
 import requestHandlers from './requestHandlers';
 import generateDocs from './generateDocs';
 
@@ -13,7 +13,7 @@ export default async (configuration: {
         configuration: AuthenticationConfiguration,
     },
     models: Model[],
-    endpoints: { method: ManualEndpointHttpMethod, path: string, requestHandler: express.RequestHandler }[],
+    endpoints: ManualEndpoint[],
     port: number,
 }) : Promise<void> => {
 
@@ -75,7 +75,7 @@ export default async (configuration: {
     });
 
     // Docs
-    app.get('/', swaggerUI.serve, swaggerUI.setup(generateDocs(configuration.models)));
+    app.get('/', swaggerUI.serve, swaggerUI.setup(generateDocs(configuration.models, configuration.endpoints)));
 
     // Startup
     app.listen(configuration.port, () => {

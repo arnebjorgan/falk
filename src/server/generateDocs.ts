@@ -1,16 +1,16 @@
-import { Field, Model } from '../definitions';
+import { Field, ManualEndpoint, Model } from '../definitions';
 const typeMap = {
     string: 'string',
     number: 'number',
     boolean: 'boolean',
 };
 
-export default (allModels: Model[]) : Object => {
+export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object => {
     const models = allModels.filter(model => model.expose);
     return {
         swagger: '2.0',
-        tags: models.map(model => model.name),
-        paths: getPaths(models),
+        tags: models.map(model => model.name).concat(manualEndpoints.length ? ['Manual endpoints'] : []),
+        paths: getPaths(models, manualEndpoints),
         definitions: models.reduce((acc: any, model: Model) => {
             acc[model.name] = {
                 type: 'object',
@@ -26,7 +26,7 @@ export default (allModels: Model[]) : Object => {
     };
 };
 
-const getPaths = (models: any[]) => {
+const getPaths = (models: any[], manualEndpoints: ManualEndpoint[]) => {
     let result : any = {};
     models.forEach((model: any) => {
         result[`/${model.name}`] = {
@@ -168,6 +168,27 @@ const getPaths = (models: any[]) => {
                     500: {
                         description: 'Internal Server Error',
                     },
+                },
+            },
+        };
+    });
+    manualEndpoints.forEach(endpoint => {
+        if(!result[endpoint.path]) result[endpoint.path] = {};
+        result[endpoint.path][endpoint.method] = {
+            tags: ['Manual endpoints'],
+            summary: `Manual endpoint`,
+            consumes: ['application/json'],
+            produces: ['application/json'],
+            parameters: [],
+            responses: {
+                200: {
+                    description: 'OK',
+                },
+                400: {
+                    description: 'Bad Request',
+                },
+                500: {
+                    description: 'Internal Server Error',
                 },
             },
         };
