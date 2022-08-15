@@ -3,18 +3,18 @@ import number from './number';
 import boolean from './boolean';
 //import datetime from './datetime';
 
-export const helperObject = {
-    STRING: 'string',
-    NUMBER: 'number',
-    BOOLEAN: 'boolean',
-    //DATETIME: 'datetime',
-}
-
-export const typeKeys = ['string', 'number', 'boolean'];
-
-export default {
+const fieldTypes = {
     string,
     number,
     boolean,
-    //DATETIME: datetime,
-}
+    //datetime,
+};
+
+export default fieldTypes;
+
+export const typeKeys =  Object.keys(fieldTypes);
+
+export const helperObject = typeKeys.reduce((acc : { [key:string] : unknown }, key) => {
+    acc[key.toUpperCase()] = key;
+    return acc;
+}, {});
