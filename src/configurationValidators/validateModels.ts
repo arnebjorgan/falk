@@ -1,11 +1,13 @@
 import Joi from 'joi';
 import { Model } from '../definitions';
+import { typeKeys } from '../fieldTypes';
+
 const validationSchema = Joi.array().items(
     Joi.object({
         name: Joi.string().required(),
         fields: Joi.array().items(Joi.object({
             name: Joi.string().required(),
-            type: Joi.string().valid('string', 'number', 'boolean').required(),
+            type: Joi.string().valid(...typeKeys).required(),
             required: Joi.boolean(),
         })).min(1).required(),
         expose: Joi.boolean(),

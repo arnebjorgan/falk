@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseGetManyOptions, DatabaseSortDirection, DatabaseSorter, Field, FieldType, Model } from '../definitions';
+import fieldTypes from '../fieldTypes';
+import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseGetManyOptions, DatabaseSortDirection, DatabaseSorter, Model } from '../definitions';
 import createGetManyQueryValidator from './createGetManyQueryValidator';
 const queryFilterOperatorMap = [
     {  key: '|like', operator: DatabaseFilterOperator.LIKE, },
@@ -17,27 +18,6 @@ const querySorterDirectionMap = [
 ];
 const specialQueryKeys = ['_sort', '_limit', '_skip'];
 
-const valueParserMap = {
-    string: (value: string) : string => {
-        return value;
-    },
-    number: (value: string) : number | string => {
-        //@ts-ignore
-        return isNaN(value) ? value : parseFloat(value);
-    },
-    boolean: (value: string) : boolean | string => {
-        if(value === 'true') {
-            return true;
-        }
-        else if(value === 'false') {
-            return false;
-        }
-        else {
-            return value;
-        }
-    },
-};
-
 export default (model: Model, database: Database) : RequestHandler  => {
     const queryValidator = createGetManyQueryValidator(model);
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -46,7 +26,7 @@ export default (model: Model, database: Database) : RequestHandler  => {
             const isArrayOperator = [DatabaseFilterOperator.IN, DatabaseFilterOperator.NOTIN].includes(operator);
             const field = model.fields.find(field => field.name === key);
             if(field) {
-                const parser = valueParserMap[field.type];
+                const parser = fieldTypes[field.type].parseFromQuery;
                 return isArrayOperator ? value.split(',').map(parser) : parser(value);
             }
             return null;

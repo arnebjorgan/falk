@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
+import fieldTypes from '../fieldTypes';
 import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseGetManyOptions, DatabaseSorter, Field, Model } from '../definitions';
-const dbTypeMap = {
-    string: String,
-    number: Number,
-    boolean: Boolean,
-};
 
 export default async (connectionString: any, modelInput: Model[]) : Promise<Database> => {
     // @ts-ignore (configuration is already validated)
@@ -12,8 +8,7 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
     let models : { [key: string]: mongoose.Model<any> } = {};
     modelInput.forEach((model: Model) => {
         const schemaObject = model.fields.reduce((acc: any, field: Field) => {
-            // @ts-ignore
-            acc[field.name] = dbTypeMap[field.type];
+            acc[field.name] = fieldTypes[field.type].mongoDbType;
             return acc;
         }, {});
         const schema = new mongoose.Schema(schemaObject, { versionKey: false });

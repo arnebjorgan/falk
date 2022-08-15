@@ -2,17 +2,14 @@ import express from 'express';
 import createDatabase from './database';
 import createAuthentication from './authentication';
 import server from './server';
-import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, FieldType, JwtConfiguration, ManualEndpoint, Middleware, Model } from './definitions';
+import { helperObject as fieldTypeHelperObject } from './fieldTypes';
+import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, JwtConfiguration, ManualEndpoint, Middleware, Model } from './definitions';
 import validateModels from './configurationValidators/validateModels';
 import validateDatabaseConfiguration from './configurationValidators/validateDatabaseConfiguration';
 import validateServerConfiguration from './configurationValidators/validateServerConfiguration';
 import validateAuthentication from './configurationValidators/validateAuthentication';
 
-export const fieldType = {
-    STRING: FieldType.STRING,
-    NUMBER: FieldType.NUMBER,
-    BOOLEAN: FieldType.BOOLEAN,
-};
+export const fieldType = fieldTypeHelperObject;
 
 export default () : App => {
     let databaseType = DatabaseType.MEMORY;

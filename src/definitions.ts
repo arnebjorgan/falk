@@ -1,14 +1,9 @@
-import express, { Request, RequestHandler } from "express"
-
-export enum FieldType {
-    STRING = 'string',
-    NUMBER = 'number',
-    BOOLEAN = 'boolean',
-}
+import express, { Request, RequestHandler } from 'express'
+import Joi from 'joi';
 
 export type Field = {
     name: string,
-    type: FieldType,
+    type: 'string'|'number'|'boolean',
     required?: boolean,
 }
 
@@ -125,6 +120,15 @@ export type ManualEndpoint = {
 
 //@internal
 export type ManualEndpointHttpMethod = 'get'|'post'|'put'|'patch'|'delete';
+
+//@internal
+export type FieldTypeHelper = {
+    key: string,
+    parseFromQuery(val : unknown) : unknown,
+    validator: Joi.Schema,
+    mongoDbType: unknown,
+    swaggerTypeString : string,
+}
 
 //@internal
 export type Database = {

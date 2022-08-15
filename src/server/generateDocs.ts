@@ -1,9 +1,5 @@
+import fieldTypes from '../fieldTypes';
 import { Field, ManualEndpoint, Model } from '../definitions';
-const typeMap = {
-    string: 'string',
-    number: 'number',
-    boolean: 'boolean',
-};
 
 export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object => {
     const models = allModels.filter(model => model.expose);
@@ -16,7 +12,7 @@ export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object 
                 type: 'object',
                 properties: model.fields.reduce((acc: any, field: Field) => {
                     acc[field.name] = {
-                        type: typeMap[field.type],
+                        type: fieldTypes[field.type].swaggerTypeString,
                     };
                     return acc;
                 }, {}),

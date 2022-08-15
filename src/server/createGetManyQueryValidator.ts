@@ -1,10 +1,6 @@
 import Joi from 'joi';
+import fieldTypes from '../fieldTypes';
 import { DatabaseFilterOperator, DatabaseGetManyOptions, Field, Model } from '../definitions';
-const validatorMap = {
-    string: Joi.string,
-    number: Joi.number,
-    boolean: Joi.boolean,
-};
 
 export default (model: Model) => {
     let validationObject : { [key: string] : any } = {};
@@ -26,7 +22,7 @@ export default (model: Model) => {
     let filterValueValidator = Joi.alternatives().conditional('key', { not: Joi.alternatives(...fieldNames), then: Joi.any() });
     const arrayFilter = Joi.alternatives(DatabaseFilterOperator.IN, DatabaseFilterOperator.NOTIN);
     model.fields.forEach(field => {
-        const fieldTypeValidator = validatorMap[field.type]().required();
+        const fieldTypeValidator = fieldTypes[field.type].validator.required();
         filterValueValidator = filterValueValidator.conditional(
             'key', {
                 is: field.name,
