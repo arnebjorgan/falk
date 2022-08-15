@@ -123,7 +123,6 @@ export type ManualEndpointHttpMethod = 'get'|'post'|'put'|'patch'|'delete';
 
 //@internal
 export type FieldTypeHelper = {
-    key: string,
     parseFromQuery(val : unknown) : unknown,
     validator: Joi.Schema,
     mongoDbType: unknown,

@@ -2,7 +2,6 @@ import Joi from 'joi';
 import { FieldTypeHelper } from '../definitions';
 
 const helper : FieldTypeHelper = {
-    key: 'string',
     parseFromQuery: (val : string) => {
         return val;
     },
