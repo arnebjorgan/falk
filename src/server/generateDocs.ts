@@ -13,6 +13,7 @@ export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object 
                 properties: model.fields.reduce((acc: any, field: Field) => {
                     acc[field.name] = {
                         type: fieldTypes[field.type].swaggerTypeString,
+                        format: fieldTypes[field.type].swaggerFormatString,
                     };
                     return acc;
                 }, {}),

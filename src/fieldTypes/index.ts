@@ -1,14 +1,16 @@
 import string from './string';
 import number from './number';
 import boolean from './boolean';
-//import datetime from './datetime';
+import datetime from './datetime';
 
 const fieldTypes = {
     string,
     number,
     boolean,
-    //datetime,
+    datetime,
 };
+
+//Remember to add new type option to type Field in src/definitions.ts
 
 export default fieldTypes;
 

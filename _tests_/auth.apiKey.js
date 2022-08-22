@@ -9,7 +9,7 @@ app.authentication.apiKey({
 app.model({
     name: 'cars',
     fields: [
-        { name: 'electric', type: 'boolean' },
+        { name: 'electric', type: falk.fieldType.BOOLEAN },
     ],
 });
 

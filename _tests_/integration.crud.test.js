@@ -8,30 +8,35 @@ const tesla = {
     brand: 'Tesla',
     horsePower: 480,
     electric: true,
+    registered_date: '2022-01-01T00:00:00.000Z',
 };
 
 const toyota = {
     brand: 'Toyota',
     horsePower: 230,
     electric: false,
+    registered_date: '2022-01-02T00:00:00.000Z', 
 };
 
 const ford = {
     brand: 'Ford',
     horsePower: 100,
     electric: false,
+    registered_date: '2022-01-03T00:00:00.000Z', 
 };
 
 const volvo = {
     brand: 'Volvo',
     horsePower: 340,
     electric: false,
+    registered_date: '2022-01-04T00:00:00.000Z', 
 };
 
 const bmw = {
     brand: 'BMW',
     horsePower: 340,
     electric: true,
+    registered_date: '2022-01-05T00:00:00.000Z', 
 };
 
 beforeAll(async () => {
@@ -93,6 +98,16 @@ test('post - it should return 400 for invalid boolean', async () => {
     } catch(e) {
         expect(e.response.status).toBe(400);
         expect(e.response.data).toBe(`"electric" must be a boolean`);
+    }
+});
+
+test('post - it should return 400 for invalid datetime', async () => {
+    try {
+        await server.post('/cars', { brand: 'foo', registered_date: 'invalid_date' });
+        fail('It should fail when posting an invalid datetime');
+    } catch(e) {
+        expect(e.response.status).toBe(400);
+        expect(e.response.data).toBe(`"registered_date" must be in ISO 8601 date format`);
     }
 });
 
@@ -534,6 +549,36 @@ test('getMany - not in boolean filter', async () => {
     expect(response.data).toContainEqual(tesla);
 });
 
+test('getMany - equal datetime filter', async () => {
+    const response = await server.get('/cars?registered_date=2022-01-01T00:00:00.000Z');
+    expect(response.status).toBe(200);
+    expect(response.data.length).toBe(1);
+    expect(response.data).toContainEqual(tesla);
+});
+
+test('getMany - not equal datetime filter', async () => {
+    const response = await server.get('/cars?registered_date|ne=2022-01-01T00:00:00.000Z');
+    expect(response.status).toBe(200);
+    expect(response.data.length).toBe(2);
+    expect(response.data).toContainEqual(volvo);
+    expect(response.data).toContainEqual(bmw);
+});
+
+test('getMany - in datetime filter', async () => {
+    const response = await server.get('/cars?registered_date|in=2022-01-01T00:00:00.000Z');
+    expect(response.status).toBe(200);
+    expect(response.data.length).toBe(1);
+    expect(response.data).toContainEqual(tesla);
+});
+
+test('getMany - not in datetime filter', async () => {
+    const response = await server.get('/cars?registered_date|nin=2022-01-01T00:00:00.000Z');
+    expect(response.status).toBe(200);
+    expect(response.data.length).toBe(2);
+    expect(response.data).toContainEqual(volvo);
+    expect(response.data).toContainEqual(bmw);
+});
+
 test('getMany - invalid string _skip', async () => {
     try {
         await server.get('/cars?_skip=foobar');
@@ -610,7 +655,7 @@ test('getMany - non existing _sort field', async () => {
         fail('It should fail when using non existing _sort field');
     } catch(e) {
         expect(e.response.status).toBe(400);
-        expect(e.response.data).toBe(`_sort field foobar does not exist, must be one of [brand, horsePower, electric]`);
+        expect(e.response.data).toBe(`_sort field foobar does not exist, must be one of [brand, horsePower, electric, registered_date]`);
     }
 });
 
@@ -620,7 +665,7 @@ test('getMany - non existing filter key', async () => {
         fail('It should fail when using non existing filter field');
     } catch(e) {
         expect(e.response.status).toBe(400);
-        expect(e.response.data).toBe(`filter field foo does not exist, must be one of [brand, horsePower, electric]`);
+        expect(e.response.data).toBe(`filter field foo does not exist, must be one of [brand, horsePower, electric, registered_date]`);
     }
 });
 

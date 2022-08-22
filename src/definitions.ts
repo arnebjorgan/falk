@@ -3,7 +3,7 @@ import Joi from 'joi';
 
 export type Field = {
     name: string,
-    type: 'string'|'number'|'boolean',
+    type: 'string'|'number'|'boolean'|'datetime',
     required?: boolean,
 }
 
@@ -127,6 +127,7 @@ export type FieldTypeHelper = {
     validator: Joi.Schema,
     mongoDbType: unknown,
     swaggerTypeString : string,
+    swaggerFormatString? : string,
 }
 
 //@internal

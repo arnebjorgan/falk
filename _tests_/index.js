@@ -17,16 +17,17 @@ app.model({
     name: 'cars',
     expose: true,
     fields: [
-        { name: 'brand', type: 'string', required: true },
-        { name: 'horsePower', type: 'number' },
-        { name: 'electric', type: 'boolean' },
+        { name: 'brand', type: falk.fieldType.STRING, required: true },
+        { name: 'horsePower', type: falk.fieldType.NUMBER },
+        { name: 'electric', type: falk.fieldType.BOOLEAN },
+        { name: 'registered_date', type: falk.fieldType.DATETIME },
     ],
 });
 
 app.model({
     name: 'not-exposed',
     fields: [
-        { name: 'foo', type: 'string' },
+        { name: 'foo', type: falk.fieldType.STRING },
     ],
 });
 
