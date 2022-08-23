@@ -9,6 +9,19 @@ export default (model: Model, options = { merge: false }) => {
         if(field.required && !options.merge) {
             fieldValidator = fieldValidator.required();
         }
+        if(field.validator) {
+            const customValidator = (val: unknown, helper: any) => {
+                const customValidationResult = field.validator?.(val);
+                if(customValidationResult === true) {
+                    return val;
+                }
+                else {
+                    //This error is not returned when used in Joi.alternatives(). Should be possible to have custom errors, also provided by end developer.
+                    throw new Error(`Invalid value for field ${field.name}`);
+                }
+            }
+            fieldValidator = Joi.alternatives().try(fieldValidator, Joi.custom(customValidator)).match('all');
+        }
         validationObject[field.name] = fieldValidator;
     });
     const validationSchema = Joi.object(validationObject);

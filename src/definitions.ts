@@ -5,6 +5,7 @@ export type Field = {
     name: string,
     type: 'string'|'number'|'boolean'|'datetime',
     required?: boolean,
+    validator?: (val: unknown) => boolean,
 }
 
 export type Model = {

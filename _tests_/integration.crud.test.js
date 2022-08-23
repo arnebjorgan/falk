@@ -9,6 +9,7 @@ const tesla = {
     horsePower: 480,
     electric: true,
     registered_date: '2022-01-01T00:00:00.000Z',
+    bodywork: 'sedan',
 };
 
 const toyota = {
@@ -128,6 +129,16 @@ test('post - it should return 400 when required field is missing and unknown fie
     } catch(e) {
         expect(e.response.status).toBe(400);
         expect(e.response.data).toBe(`"brand" is required, "foo" is not allowed`);
+    }
+});
+
+test('post - it should return 400 when custom field validator fails', async () => {
+    try {
+        await server.post('/cars', { brand: 'foo', bodywork: 'suuuv' });
+        fail('It should fail when posting with custom validator failing');
+    } catch(e) {
+        expect(e.response.status).toBe(400);
+        expect(e.response.data).toBe(`"bodywork" does not match all of the required types`);
     }
 });
 
@@ -655,7 +666,7 @@ test('getMany - non existing _sort field', async () => {
         fail('It should fail when using non existing _sort field');
     } catch(e) {
         expect(e.response.status).toBe(400);
-        expect(e.response.data).toBe(`_sort field foobar does not exist, must be one of [brand, horsePower, electric, registered_date]`);
+        expect(e.response.data).toBe(`_sort field foobar does not exist, must be one of [brand, horsePower, electric, registered_date, bodywork]`);
     }
 });
 
@@ -665,7 +676,7 @@ test('getMany - non existing filter key', async () => {
         fail('It should fail when using non existing filter field');
     } catch(e) {
         expect(e.response.status).toBe(400);
-        expect(e.response.data).toBe(`filter field foo does not exist, must be one of [brand, horsePower, electric, registered_date]`);
+        expect(e.response.data).toBe(`filter field foo does not exist, must be one of [brand, horsePower, electric, registered_date, bodywork]`);
     }
 });
 

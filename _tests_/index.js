@@ -21,6 +21,7 @@ app.model({
         { name: 'horsePower', type: falk.fieldType.NUMBER },
         { name: 'electric', type: falk.fieldType.BOOLEAN },
         { name: 'registered_date', type: falk.fieldType.DATETIME },
+        { name: 'bodywork', type: falk.fieldType.STRING, validator: val => ['suv', 'sedan', 'station_wagon'].includes(val) },
     ],
 });
 
