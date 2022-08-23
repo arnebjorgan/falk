@@ -1,6 +1,6 @@
 {
   "name": "falk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The easiest and fastest way to create RESTful APIs in Node.js",
   "main": "dist/index.js",
   "files": ["dist/**/*"],
