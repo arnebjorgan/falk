@@ -4,11 +4,11 @@
   <p align="center">
     🤖 <a href="https://falkjs.com">https://falkjs.com</a> 🤖
     <br/>
-    Flexible and minimal REST API creation
+    <h3>Flexible and minimal REST API creation</h3>
   </p>
 </p>
 <br/>
-<div style="display:flex;flex-direction:column;align-items:center;">
+<div align="center">
     <div>⚡ Minimal configuration</div>
     <div>🔑 Built-in auth</div>
     <div>📦 Database agnostic</div>
@@ -29,4 +29,4 @@
   <br />
 </div>
 </br>
-<span style="color:red;">Falk is under initial development and may have breaking changes until v1.0.0 is released.</span>
+<span>Falk is under initial development and may have breaking changes until v1.0.0 is released.</span>
