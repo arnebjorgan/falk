@@ -4,7 +4,7 @@
   <p align="center">
     🤖 <a href="https://falkjs.com">https://falkjs.com</a> 🤖
     <br/>
-    <h3>Flexible and minimal REST API creation</h3>
+    <h3 align="center">Flexible and minimal REST API creation</h3>
   </p>
 </p>
 <br/>
