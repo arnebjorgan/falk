@@ -2,20 +2,19 @@
   <img src="logo.png" width="340px" align="center" alt="Falk logo" />
   <h1 align="center">Falk</h1>
   <p align="center">
-    ✨ <a href="https://falkjs.com">https://falkjs.com</a> ✨
+    🤖 <a href="https://falkjs.com">https://falkjs.com</a> 🤖
     <br/>
     Flexible and minimal REST API creation
   </p>
 </p>
 <br/>
-<div align="center">
-  <ul>
-    <li>⚡ Minimal configuration</li>
-    <li>🔑 Built-in auth</li>
-    <li>📦 Database agnostic</li>
-    <li>❔ Complex query support</li>
-    <li>📄 Automatic Open API docs</li>
-    <li>✔️ Request validation</li>
+<div style="display:flex;justify-content:center;width:100%;">
+    ⚡ Minimal configuration
+    🔑 Built-in auth
+    📦 Database agnostic
+    ❔ Complex query support
+    📄 Automatic Open API docs
+    ✔️ Request validation
   </ul>
 </div>
 <br/>
@@ -30,6 +29,4 @@
   <br />
 </div>
 </br>
-> Falk is under initial development and may have breaking changes until v1.0.0 is released.
-
-TODO: PUT LOGO IN REPO
+<span style="color:red;">Falk is under initial development and may have breaking changes until v1.0.0 is released.</span>
