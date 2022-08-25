@@ -29,4 +29,4 @@
   <br />
 </div>
 </br>
-<span>Falk is under initial development and may have breaking changes until v1.0.0 is released.</span>
+<div align="center">Falk is under initial development and may have breaking changes until v1.0.0 is released.</div>
