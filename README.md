@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" width="340px" align="center" alt="Falk logo" />
+  <img src="logo.png" width="140px" align="center" alt="Falk logo" />
   <h1 align="center">Falk</h1>
   <p align="center">
     🤖 <a href="https://falkjs.com">https://falkjs.com</a> 🤖
@@ -8,14 +8,14 @@
   </p>
 </p>
 <br/>
-<div style="display:flex;justify-content:center;width:100%;">
-    ⚡ Minimal configuration
-    🔑 Built-in auth
-    📦 Database agnostic
-    ❔ Complex query support
-    📄 Automatic Open API docs
-    ✔️ Request validation
-  </ul>
+<div style="display:flex;flex-direction:column;align-items:center;">
+    <div>⚡ Minimal configuration</div>
+    <div>🔑 Built-in auth</div>
+    <div>📦 Database agnostic</div>
+    <div>❔ Complex query support</div>
+    <div>📄 Automatic Open API docs</div>
+    <div>✔️ Request validation</div>
+  </div>
 </div>
 <br/>
 <div align="center">
