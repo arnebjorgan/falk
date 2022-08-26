@@ -36,6 +36,7 @@ export type App = {
         apiKey(configuration: ApiKeyConfiguration) : void,
         jwt(configuration: JwtConfiguration) : void,
     },
+    beforeAll(requestHandler : RequestHandler) : void,
     model(model: Model) : void,
     endpoint: {
         get(path : string, requestHandler : RequestHandler) : void,

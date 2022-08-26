@@ -12,6 +12,7 @@ export default async (configuration: {
         middleware: Middleware,
         configuration: AuthenticationConfiguration,
     },
+    beforeAlls: express.RequestHandler[],
     models: Model[],
     endpoints: ManualEndpoint[],
     port: number,
@@ -51,6 +52,11 @@ export default async (configuration: {
     else {
         console.info(`Authentication type ${configuration.authentication.type} enabled 🔒`)
     }
+
+    //Before all handlers
+    configuration.beforeAlls.forEach(beforeAll => {
+        app.use(beforeAll);
+    });
 
     // Models
     configuration.models.forEach(model => {

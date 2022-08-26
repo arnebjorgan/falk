@@ -16,6 +16,7 @@ export default () : App => {
     let databaseConfiguration : DatabaseConfiguration;
     let authenticationType = AuthenticationType.PUBLIC;
     let authenticationConfiguration : AuthenticationConfiguration;
+    const beforeAlls : express.RequestHandler[] = [];
     const models : Model[] = [];
     const endpoints : ManualEndpoint[] = [];
 
@@ -42,6 +43,9 @@ export default () : App => {
                 authenticationConfiguration = configuration;
             },
         },
+        beforeAll(beforeAll : express.RequestHandler) : void {
+            beforeAlls.push(beforeAll)
+        },
         model(model: Model) : void {
             models.push(model);
         },
@@ -67,6 +71,7 @@ export default () : App => {
                     middleware: authenticationMiddleware,
                     configuration: authenticationConfiguration,
                 },
+                beforeAlls,
                 models,
                 endpoints,
                 port: finalPort,
