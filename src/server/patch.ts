@@ -5,6 +5,11 @@ import createRequestBodyValidator from './createRequestBodyValidator';
 export default (model: Model, database: Database) : RequestHandler  => {
     const bodyValidator = createRequestBodyValidator(model, { merge: true });
     return async (req: Request, res: Response, next: NextFunction) => {
+        model.fields.forEach(field => {
+            if(field.type === 'auto_updated_at') {
+                req.body[field.name] = new Date();
+            }
+        });
         const bodyErrors = bodyValidator(req.body);
         if(bodyErrors) {
             res.status(400).send(bodyErrors);

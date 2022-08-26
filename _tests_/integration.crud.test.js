@@ -1,4 +1,7 @@
 const axios = require('axios');
+const dayjs = require('dayjs');
+var isBetween = require('dayjs/plugin/isBetween');
+dayjs.extend(isBetween);
 
 const server = axios.create({
     baseURL: 'http://localhost:8080',
@@ -59,6 +62,36 @@ test('expose - it should return 404 for non-exposed model', async () => {
     } catch(e) {
         expect(e.response.status).toBe(404);
     }
+});
+
+test('model.timestamps - it should set created_at and updated_at', async () => {
+    const postResponse = await server.post('/brands', { name: 'Nike' });
+    expect(postResponse.status).toBe(200);
+    expect(postResponse.data.name).toEqual('Nike');
+
+    expect(postResponse.data.created_at).toBeDefined();
+    const createdAtDayObject = dayjs(postResponse.data.created_at);
+    const testCreatedAt = createdAtDayObject.isBetween(dayjs().subtract(1, 'seconds'), dayjs());
+    expect(testCreatedAt).toEqual(true);
+
+    expect(postResponse.data.updated_at).toBeDefined();
+    const updatedAtDayObject = dayjs(postResponse.data.updated_at);
+    const testUpdatedAt = updatedAtDayObject.isBetween(dayjs().subtract(1, 'seconds'), dayjs());
+    expect(testUpdatedAt).toEqual(true);
+
+    const patchResponse = await server.patch(`/brands/${postResponse.data._id}`, { name: 'Adidas' });
+    expect(patchResponse.status).toBe(200);
+    expect(patchResponse.data.name).toEqual('Adidas');
+
+    expect(patchResponse.data.created_at).toBeDefined();
+    const createdAtDayObject2 = dayjs(patchResponse.data.created_at);
+    const testCreatedAt2 = createdAtDayObject2.isSame(createdAtDayObject);
+    expect(testCreatedAt2).toEqual(true);
+
+    expect(patchResponse.data.updated_at).toBeDefined();
+    const updatedAtDayObject2 = dayjs(patchResponse.data.updated_at);
+    const testUpdatedAt2 = updatedAtDayObject2.isBetween(dayjs().subtract(1, 'seconds'), dayjs()) && !updatedAtDayObject2.isSame(updatedAtDayObject);
+    expect(testUpdatedAt2).toEqual(true);
 });
 
 test('post - it should return 400 when one unknown field is sent', async () => {

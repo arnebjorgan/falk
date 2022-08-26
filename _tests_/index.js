@@ -26,6 +26,16 @@ app.model({
 });
 
 app.model({
+    name: 'brands',
+    expose: true,
+    fields: [
+        { name: 'name', type: falk.fieldType.STRING },
+        { name: 'created_at', type: falk.fieldType.AUTO_CREATED_AT },
+        { name: 'updated_at', type: falk.fieldType.AUTO_UPDATED_AT },
+    ],
+});
+
+app.model({
     name: 'not-exposed',
     fields: [
         { name: 'foo', type: falk.fieldType.STRING },
