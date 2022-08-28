@@ -1,5 +1,5 @@
 const falk = require('../dist/index');
-const app = falk();
+const app = falk.default();
 
 app.authentication.jwt({
     secret: 'secret',
@@ -17,11 +17,10 @@ app.authentication.jwt({
     tokenExpirationMS: 360000,
 });
 
-app.model({
-    name: 'cars',
-    fields: [
-        { name: 'electric', type: 'boolean' },
-    ],
+app.model('cars', {
+    electric: falk.fieldType.boolean(),
+}, {
+    expose: true,
 });
 
 app.startServer();

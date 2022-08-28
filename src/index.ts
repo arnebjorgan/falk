@@ -2,14 +2,14 @@ import express from 'express';
 import createDatabase from './database';
 import createAuthentication from './authentication';
 import server from './server';
-import { helperObject as fieldTypeHelperObject } from './fieldTypes';
-import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, JwtConfiguration, ManualEndpoint, Middleware, Model } from './definitions';
+import { createFieldHelper } from './fieldTypes';
+import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, Field, FieldConfiguration, FieldType, JwtConfiguration, ManualEndpoint, Middleware, Model, ModelConfiguration } from './definitions';
 import validateModels from './configurationValidators/validateModels';
 import validateDatabaseConfiguration from './configurationValidators/validateDatabaseConfiguration';
 import validateServerConfiguration from './configurationValidators/validateServerConfiguration';
 import validateAuthentication from './configurationValidators/validateAuthentication';
 
-export const fieldType = fieldTypeHelperObject;
+export const fieldType = createFieldHelper;
 
 export default () : App => {
     let databaseType = DatabaseType.MEMORY;
@@ -46,8 +46,20 @@ export default () : App => {
         beforeAll(beforeAll : express.RequestHandler) : void {
             beforeAlls.push(beforeAll)
         },
-        model(model: Model) : void {
-            models.push(model);
+        model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }, configuration?: ModelConfiguration) : void {
+            const fieldArray : Field[] = [];
+            for(const [key, value] of Object.entries(fields)) {
+                fieldArray.push({
+                    name: key,
+                    type: value.type,
+                    ...value.configuration,
+                });
+            }
+            models.push({
+                name,
+                fields: fieldArray,
+                ...configuration, 
+            });
         },
         endpoint:{
             get: (path: string, requestHandler : express.RequestHandler) => endpoints.push({ method: 'get', path, requestHandler }),

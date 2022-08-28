@@ -114,7 +114,6 @@ test('post - it should return 400 when required field is missing', async () => {
     }
 });
 
-
 test('post - it should return 400 for invalid number', async () => {
     try {
         await server.post('/cars', { brand: 'foo', horsePower: 'foobar' });

@@ -13,33 +13,26 @@ else if(databaseType === 'mongodb') {
     app.database.mongodb(process.env.MONGODB_CONNECTIONSTRING);
 }
 
-app.model({
-    name: 'cars',
+app.model('cars', {
+    brand: falk.fieldType.string({ required: true }),
+    horsePower: falk.fieldType.number(),
+    electric: falk.fieldType.boolean(),
+    registered_date: falk.fieldType.datetime(),
+    bodywork: falk.fieldType.string({ validator: val => ['suv', 'sedan', 'station_wagon'].includes(val) }),
+},{
     expose: true,
-    fields: [
-        { name: 'brand', type: falk.fieldType.STRING, required: true },
-        { name: 'horsePower', type: falk.fieldType.NUMBER },
-        { name: 'electric', type: falk.fieldType.BOOLEAN },
-        { name: 'registered_date', type: falk.fieldType.DATETIME },
-        { name: 'bodywork', type: falk.fieldType.STRING, validator: val => ['suv', 'sedan', 'station_wagon'].includes(val) },
-    ],
 });
 
-app.model({
-    name: 'brands',
+app.model('brands', {
+    name: falk.fieldType.string(),
+    created_at: falk.fieldType.autoCreatedAt(),
+    updated_at: falk.fieldType.autoUpdatedAt(),
+},{
     expose: true,
-    fields: [
-        { name: 'name', type: falk.fieldType.STRING },
-        { name: 'created_at', type: falk.fieldType.AUTO_CREATED_AT },
-        { name: 'updated_at', type: falk.fieldType.AUTO_UPDATED_AT },
-    ],
 });
 
-app.model({
-    name: 'not-exposed',
-    fields: [
-        { name: 'foo', type: falk.fieldType.STRING },
-    ],
+app.model('not-exposed', {
+    foo: falk.fieldType.string(),
 });
 
 app.endpoint.get('/manual-endpoint', (req, res, next) => {

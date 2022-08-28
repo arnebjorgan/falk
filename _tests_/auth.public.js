@@ -1,13 +1,12 @@
 const falk = require('../dist/index');
-const app = falk();
+const app = falk.default();
 
 app.authentication.public();
 
-app.model({
-    name: 'cars',
-    fields: [
-        { name: 'electric', type: 'boolean' },
-    ],
+app.model('cars', {
+    electric: falk.fieldType.boolean(),
+}, {
+    expose: true,
 });
 
 app.startServer();

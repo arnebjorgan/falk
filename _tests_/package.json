@@ -13,7 +13,6 @@
     "test:integration:auth:public": "jest integration.auth.public.test.js",
     "test:integration:auth:apiKey": "jest integration.auth.apiKey.test.js",
     "test:integration:auth:jwt": "jest integration.auth.jwt.test.js",
-    "test:utils": "jest utils.test.js",
     "test:watch": "jest --watch"
   },
   "keywords": [],

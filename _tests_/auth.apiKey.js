@@ -1,16 +1,15 @@
 const falk = require('../dist/index');
-const app = falk();
+const app = falk.default();
 
 app.authentication.apiKey({
     key: 'secret',
     headerName: 'Api-Key',
 });
 
-app.model({
-    name: 'cars',
-    fields: [
-        { name: 'electric', type: falk.fieldType.BOOLEAN },
-    ],
+app.model('cars', {
+    electric: falk.fieldType.boolean(),
+}, {
+    expose: true,
 });
 
 app.startServer();

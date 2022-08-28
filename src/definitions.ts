@@ -3,7 +3,10 @@ import Joi from 'joi';
 
 export type Field = {
     name: string,
-    type: 'string'|'number'|'boolean'|'datetime'|'auto_created_at'|'auto_updated_at',
+    type: FieldType,
+} & FieldConfiguration;
+
+export type FieldConfiguration = {
     required?: boolean,
     validator?: (val: unknown) => boolean,
 }
@@ -11,6 +14,9 @@ export type Field = {
 export type Model = {
     name: string,
     fields: Field[],
+} & ModelConfiguration;
+
+export type ModelConfiguration = {
     expose?: boolean,
 }
 
@@ -37,7 +43,7 @@ export type App = {
         jwt(configuration: JwtConfiguration) : void,
     },
     beforeAll(requestHandler : RequestHandler) : void,
-    model(model: Model) : void,
+    model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }, configuration?: ModelConfiguration) : void,
     endpoint: {
         get(path : string, requestHandler : RequestHandler) : void,
         post(path : string, requestHandler : RequestHandler) : void,
@@ -47,6 +53,9 @@ export type App = {
     },
     startServer(port?: number) : Promise<void>,
 }
+
+//@internal
+export type FieldType = 'string'|'number'|'boolean'|'datetime'|'auto_created_at'|'auto_updated_at';
 
 //@internal
 export type Middleware = (req: express.Request, res: express.Response, next: express.NextFunction) => void;

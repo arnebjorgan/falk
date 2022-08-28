@@ -4,6 +4,25 @@ import boolean from './boolean';
 import datetime from './datetime';
 import auto_created_at from './auto_created_at';
 import auto_updated_at from './auto_updated_at';
+import { Field, FieldConfiguration, FieldType } from '../definitions';
+
+//Remember to add new type option to type FieldType in src/definitions.ts
+
+const createField = (type: FieldType, configuration : FieldConfiguration = {}) : { type: FieldType, configuration: FieldConfiguration } => {
+    return {
+        type,
+        configuration,
+    };
+};
+
+export const createFieldHelper = {
+    string: createField.bind(this, 'string'),
+    number: createField.bind(this, 'number'),
+    boolean: createField.bind(this, 'boolean'),
+    datetime: createField.bind(this, 'datetime'),
+    autoCreatedAt: createField.bind(this, 'auto_created_at'),
+    autoUpdatedAt: createField.bind(this, 'auto_updated_at'),
+};
 
 const fieldTypes = {
     string,
@@ -14,13 +33,4 @@ const fieldTypes = {
     auto_updated_at,
 };
 
-//Remember to add new type option to type Field in src/definitions.ts
-
 export default fieldTypes;
-
-export const typeKeys =  Object.keys(fieldTypes);
-
-export const helperObject = typeKeys.reduce((acc : { [key:string] : unknown }, key) => {
-    acc[key.toUpperCase()] = key;
-    return acc;
-}, {});
