@@ -67,10 +67,10 @@ export default async (configuration: {
             app.put(`/${model.name}/:id`, requestHandlers.put(model, configuration.database));
             app.patch(`/${model.name}/:id`, requestHandlers.patch(model, configuration.database));
             app.delete(`/${model.name}/:id`, requestHandlers.del(model, configuration.database));
-            console.info(`☑ ${model.name} - exposed on API`);
+            console.info(`🌎 ${model.name} - exposed on API`);
         }
         else {
-            console.info(`☑ ${model.name} - modeled in database`);
+            console.info(`📦 ${model.name} - modeled in database`);
         }
     });
 
