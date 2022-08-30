@@ -46,6 +46,10 @@ const bmw = {
 beforeAll(async () => {
     const carsResponse = await server.get('/cars');
     await Promise.all(carsResponse.data.map(car => server.delete(`/cars/${car._id}`)));
+    const brandsResponse = await server.get('/brands');
+    await Promise.all(brandsResponse.data.map(brand => server.delete(`/brands/${brand._id}`)));
+    const allowResponse = await server.get('/allow-bar-and-reads');
+    await Promise.all(allowResponse.data.map(allow => server.delete(`/allow-bar-and-reads/${allow._id}`)));
 });
 
 test('docs - it should return 200 on root', async () => {
@@ -92,6 +96,29 @@ test('model.timestamps - it should set created_at and updated_at', async () => {
     const updatedAtDayObject2 = dayjs(patchResponse.data.updated_at);
     const testUpdatedAt2 = updatedAtDayObject2.isBetween(dayjs().subtract(1, 'seconds'), dayjs()) && !updatedAtDayObject2.isSame(updatedAtDayObject);
     expect(testUpdatedAt2).toEqual(true);
+});
+
+test('allow - allow read and specific write', async () => {
+    const postResponse = await server.post('/allow-bar-and-read', { foo: 'bar' });
+    expect(postResponse.status).toBe(200);
+    expect(postResponse.data.foo).toEqual('bar');
+    const getByIdResponse = await server.get(`/allow-bar-and-read/${postResponse.data._id}`);
+    expect(getByIdResponse.status).toBe(200);
+    expect(getByIdResponse.data._id).toEqual(postResponse.data._id);
+    const getManyResponse = await server.get('/allow-bar-and-read/');
+    expect(getManyResponse.status).toBe(200);
+    expect(getManyResponse.data.length).toEqual(1);
+    expect(getManyResponse.data[0]._id).toEqual(postResponse.data._id);
+});
+
+test('allow - write not allowed', async () => {
+    try {
+        await server.post('/allow-bar-and-read', { foo: 'forbidden' });
+        fail('It should fail when allow returns false');
+    } catch(e) {
+        expect(e.response.status).toBe(403);
+        expect(e.response.data).toBe(`Operation forbidden`);
+    }
 });
 
 test('post - it should return 400 when one unknown field is sent', async () => {

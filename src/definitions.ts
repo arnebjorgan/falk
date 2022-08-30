@@ -18,6 +18,17 @@ export type Model = {
 
 export type ModelConfiguration = {
     expose?: boolean,
+    allow?: (data: { [key:string]:unknown }, operation : Operation) => boolean,
+}
+
+export type Operation = {
+    read: boolean,
+    get: boolean,
+    list: boolean,
+    write: boolean,
+    create: boolean,
+    update: boolean,
+    delete: boolean,
 }
 
 export type ApiKeyConfiguration = {

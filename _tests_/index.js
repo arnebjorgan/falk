@@ -35,6 +35,17 @@ app.model('not-exposed', {
     foo: falk.fieldType.string(),
 });
 
+app.model('allow-bar-and-read', {
+    foo: falk.fieldType.string(),
+}, {
+    expose: true,
+    allow: (data, operation) => {
+        if(data.foo === 'bar') return true;
+        else if(operation.read) return true;
+        else return false;
+    },
+});
+
 app.endpoint.get('/manual-endpoint', (req, res, next) => {
     res.send('ok');
 });
