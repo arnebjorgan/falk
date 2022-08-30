@@ -35,7 +35,7 @@ app.model('not-exposed', {
     foo: falk.fieldType.string(),
 });
 
-app.model('allow-bar-and-read', {
+app.model('allow-bar-and-reads', {
     foo: falk.fieldType.string(),
 }, {
     expose: true,

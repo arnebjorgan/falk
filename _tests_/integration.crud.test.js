@@ -99,13 +99,13 @@ test('model.timestamps - it should set created_at and updated_at', async () => {
 });
 
 test('allow - allow read and specific write', async () => {
-    const postResponse = await server.post('/allow-bar-and-read', { foo: 'bar' });
+    const postResponse = await server.post('/allow-bar-and-reads', { foo: 'bar' });
     expect(postResponse.status).toBe(200);
     expect(postResponse.data.foo).toEqual('bar');
-    const getByIdResponse = await server.get(`/allow-bar-and-read/${postResponse.data._id}`);
+    const getByIdResponse = await server.get(`/allow-bar-and-reads/${postResponse.data._id}`);
     expect(getByIdResponse.status).toBe(200);
     expect(getByIdResponse.data._id).toEqual(postResponse.data._id);
-    const getManyResponse = await server.get('/allow-bar-and-read/');
+    const getManyResponse = await server.get('/allow-bar-and-reads');
     expect(getManyResponse.status).toBe(200);
     expect(getManyResponse.data.length).toEqual(1);
     expect(getManyResponse.data[0]._id).toEqual(postResponse.data._id);
@@ -113,7 +113,7 @@ test('allow - allow read and specific write', async () => {
 
 test('allow - write not allowed', async () => {
     try {
-        await server.post('/allow-bar-and-read', { foo: 'forbidden' });
+        await server.post('/allow-bar-and-reads', { foo: 'forbidden' });
         fail('It should fail when allow returns false');
     } catch(e) {
         expect(e.response.status).toBe(403);
