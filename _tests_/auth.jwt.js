@@ -4,8 +4,8 @@ const app = falk.default();
 app.authentication.jwt({
     secret: 'secret',
     authEndpoint: '/auth/login',
-    authCheck: async (req, acceptUser, rejectUser) => {
-        if(req.body.username === 'foo') {
+    authCheck: async (data, acceptUser, rejectUser) => {
+        if(data.username === 'foo') {
             acceptUser({
                 username: 'foo',
             });

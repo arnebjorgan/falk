@@ -29,7 +29,7 @@ export default async (configuration: {
         app.post(jwtConfiguration.authEndpoint, async(req, res) => {
             try {
                 await jwtConfiguration.authCheck(
-                    req,
+                    req.body,
                     async (userData?: { [key: string]: any; }) => {
                         const token = jwt.sign(userData || {}, jwtConfiguration.secret, { expiresIn: (jwtConfiguration.tokenExpirationMS || 360000) / 1000 });
                         res.status(200).send({

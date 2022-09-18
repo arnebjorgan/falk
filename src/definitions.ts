@@ -1,4 +1,4 @@
-import express, { Request, RequestHandler } from 'express'
+import express, { RequestHandler } from 'express'
 import Joi from 'joi';
 
 export type Field = {
@@ -39,7 +39,7 @@ export type ApiKeyConfiguration = {
 export type JwtConfiguration = {
     secret: string,
     authEndpoint: string,
-    authCheck: (req: Request, acceptUser: (userData?: { [key: string]: any }) => Promise<void>, rejectUser: () => Promise<void>) => Promise<void>,
+    authCheck: (data: { [key:string]:unknown }, acceptUser: (userData?: { [key: string]: any }) => Promise<void>, rejectUser: () => Promise<void>) => Promise<void>,
     tokenExpirationMS?: number,
 }
 
