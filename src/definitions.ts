@@ -39,7 +39,7 @@ export type ApiKeyConfiguration = {
 export type JwtConfiguration = {
     secret: string,
     authEndpoint: string,
-    authCheck: (req: Request, accept: (userData?: { [key: string]: any }) => Promise<void>, reject: () => Promise<void>) => Promise<void>,
+    authCheck: (req: Request, acceptUser: (userData?: { [key: string]: any }) => Promise<void>, rejectUser: () => Promise<void>) => Promise<void>,
     tokenExpirationMS?: number,
 }
 
