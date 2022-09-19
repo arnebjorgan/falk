@@ -1,4 +1,4 @@
-import express, { RequestHandler } from 'express'
+import express, { application, RequestHandler } from 'express'
 import Joi from 'joi';
 
 export type Field = {
@@ -18,7 +18,7 @@ export type Model = {
 
 export type ModelConfiguration = {
     expose?: boolean,
-    allow?: (data: { [key:string]:unknown }, operation : Operation) => boolean,
+    allow?: (data: { [key:string]:unknown }, operation : Operation, user?: { [key: string]: any }) => boolean,
 }
 
 export type Operation = {
@@ -43,6 +43,8 @@ export type JwtConfiguration = {
     tokenExpirationMS?: number,
 }
 
+export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: { [key: string]: any }) => void, rejectUser: () => void) => Promise<void>;
+
 export type App = {
     database: {
         memory() : void,
@@ -52,6 +54,7 @@ export type App = {
         public() : void,
         apiKey(configuration: ApiKeyConfiguration) : void,
         jwt(configuration: JwtConfiguration) : void,
+        userProvider(providerFunc: UserProviderFunc) : void,
     },
     beforeAll(requestHandler : RequestHandler) : void,
     model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }, configuration?: ModelConfiguration) : void,
@@ -76,13 +79,14 @@ export enum AuthenticationType {
     PUBLIC = 'public',
     API_KEY = 'apiKey',
     JWT = 'jwt',
+    USER_PROVIDER = 'userProvider',
 }
 
 //@internal
 export type DatabaseConfiguration = undefined | string;
 
 //@internal
-export type AuthenticationConfiguration = undefined | ApiKeyConfiguration | JwtConfiguration;
+export type AuthenticationConfiguration = undefined | ApiKeyConfiguration | JwtConfiguration | UserProviderFunc;
 
 //@internal
 export enum DatabaseType {

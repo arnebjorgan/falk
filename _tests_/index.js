@@ -39,7 +39,7 @@ app.model('allow-bar-and-reads', {
     foo: falk.fieldType.string(),
 }, {
     expose: true,
-    allow: (data, operation) => {
+    allow: (data, operation, user) => {
         if(data.foo === 'bar') return true;
         else if(operation.read) return true;
         else return false;

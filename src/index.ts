@@ -3,7 +3,7 @@ import createDatabase from './database';
 import createAuthentication from './authentication';
 import server from './server';
 import { createFieldHelper } from './fieldTypes';
-import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, Field, FieldConfiguration, FieldType, JwtConfiguration, ManualEndpoint, Middleware, Model, ModelConfiguration } from './definitions';
+import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, Field, FieldConfiguration, FieldType, JwtConfiguration, ManualEndpoint, Middleware, Model, ModelConfiguration, UserProviderFunc } from './definitions';
 import validateModels from './configurationValidators/validateModels';
 import validateDatabaseConfiguration from './configurationValidators/validateDatabaseConfiguration';
 import validateServerConfiguration from './configurationValidators/validateServerConfiguration';
@@ -41,6 +41,10 @@ export default () : App => {
             jwt(configuration: JwtConfiguration) : void {
                 authenticationType = AuthenticationType.JWT;
                 authenticationConfiguration = configuration;
+            },
+            userProvider(userProviderFunc: UserProviderFunc) : void {
+                authenticationType = AuthenticationType.USER_PROVIDER;
+                authenticationConfiguration = userProviderFunc;
             },
         },
         beforeAll(beforeAll : express.RequestHandler) : void {

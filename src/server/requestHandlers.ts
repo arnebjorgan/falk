@@ -12,7 +12,7 @@ const requestHandler = (handler : RequestHandlerFactory, operation: Operation) :
         const coreHandler = handler(model, database);
         return async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
             try {
-                if(model.allow && !model.allow(req.body, operation)) {
+                if(model.allow && !model.allow(req.body, operation, res.locals._falk_user)) {
                     res.status(403).send('Operation forbidden');
                 }
                 else {

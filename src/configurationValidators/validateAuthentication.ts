@@ -12,6 +12,7 @@ const validationSchemas = {
         authCheck: Joi.function().arity(3).required(),
         tokenExpirationMS: Joi.number().integer(),
     }),
+    userProvider: Joi.function().required(),
 };
 
 export default (authenticationType: AuthenticationType, authenticationConfiguration: any) : void => {
