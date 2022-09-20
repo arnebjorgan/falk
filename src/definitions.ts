@@ -159,10 +159,10 @@ export type FieldTypeHelper = {
 
 //@internal
 export type Database = {
-    tryGetById(modelName: string, id: string) : any,
+    getById(modelName: string, id: string) : any,
     getMany(modelName: string, options: DatabaseGetManyOptions) : any,
     create(modelName: string, data: any) : any,
-    tryUpdate(modelName: string, id: string, data: any) : any,
     update(modelName: string, id: string, data: any) : any,
-    tryDelete(modelName: string, id: string) : any,
+    put(modelName: string, id: string, data: any) : any,
+    delete(modelName: string, id: string) : any,
 }

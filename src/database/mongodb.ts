@@ -15,7 +15,7 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
         models[model.name] = mongoose.model(model.name, schema);
     });
     return {
-        tryGetById(modelName: string, id: string) {
+        getById(modelName: string, id: string) {
             const isValidId = mongoose.isValidObjectId(id);
             if(!isValidId) {
                 return null;
@@ -69,21 +69,21 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
         create(modelName: string, data: any) {
             return models[modelName].create(data);
         },
-        tryUpdate(modelName: string, id: string, data: any) {
+        update(modelName: string, id: string, data: any) {
             const isValidId = mongoose.isValidObjectId(id);
             if(!isValidId) {
                 return null;
             }
             return models[modelName].findByIdAndUpdate(id, data, { new: true });
         },
-        update(modelName: string, id: string, data: any) {
+        put(modelName: string, id: string, data: any) {
             const isValidId = mongoose.isValidObjectId(id);
             if(!isValidId) {
                 return null;
             }
             return models[modelName].findByIdAndUpdate(id, { ...data, _id: id }, { new: true, upsert: true, overwrite: true });
         },
-        tryDelete(modelName: string, id: string) {
+        delete(modelName: string, id: string) {
             const isValidId = mongoose.isValidObjectId(id);
             if(!isValidId) {
                 return null;
