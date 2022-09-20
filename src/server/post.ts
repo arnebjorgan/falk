@@ -15,7 +15,7 @@ export default (model: Model, database: Database) : RequestHandler  => {
             res.status(400).send(bodyErrors);
         }
         else {
-            const result = await database.create(model.name, req.body);
+            const result = await database.collection(model.name).create(req.body);
             res.send(result);
         }
     };

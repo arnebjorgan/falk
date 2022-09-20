@@ -15,7 +15,7 @@ export default (model: Model, database: Database) : RequestHandler  => {
             res.status(400).send(bodyErrors);
         }
         else {
-            const result = await database.put(model.name, req.params.id, req.body);
+            const result = await database.collection(model.name).put(req.params.id, req.body);
             if(result) {
                 res.send(result);
             }

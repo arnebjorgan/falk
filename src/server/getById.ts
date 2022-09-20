@@ -3,7 +3,7 @@ import { Database, Model } from '../definitions';
 
 export default (model: Model, database: Database) : RequestHandler  => {
     return async (req: Request, res: Response, next: NextFunction) => {
-        const result = await database.getById(model.name, req.params.id);
+        const result = await database.collection(model.name).getById(req.params.id);
         if(result) {
             res.send(result);
         }

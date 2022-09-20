@@ -81,7 +81,7 @@ export default (model: Model, database: Database) : RequestHandler  => {
             res.status(400).send(queryErrors);
         }
         else {
-            const result = await database.getMany(model.name, getManyOptions);
+            const result = await database.collection(model.name).getMany(getManyOptions);
             res.send(result);
         }
     };
