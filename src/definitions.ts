@@ -43,7 +43,7 @@ export type JwtConfiguration = {
     tokenExpirationMS?: number,
 }
 
-export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: { [key: string]: any }) => void, rejectUser: () => void) => Promise<void>;
+export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: { [key: string]: any }) => void, rejectUser: () => void) => Promise<void> | void;
 
 export type App = {
     database: {
