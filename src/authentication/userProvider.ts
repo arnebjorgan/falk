@@ -6,7 +6,7 @@ export default (userProviderFunc : UserProviderFunc) : Middleware => {
         try {
             await userProviderFunc(
                 req,
-                (userData?: { [key: string]: any }) => {
+                (userData?: unknown) => {
                     res.locals._falk_user = userData;
                     next();
                 },
