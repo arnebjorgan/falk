@@ -1,4 +1,4 @@
-import express, { application, RequestHandler } from 'express'
+import express from 'express'
 import Joi from 'joi';
 
 export type Field = {
@@ -45,6 +45,8 @@ export type JwtConfiguration = {
 
 export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: unknown) => void, rejectUser: () => void) => Promise<void> | void;
 
+export type ManualEndpointHandler = (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) => Promise<void> | void;
+
 export type App = {
     database: {
         memory() : void,
@@ -56,14 +58,14 @@ export type App = {
         jwt(configuration: JwtConfiguration) : void,
         userProvider(providerFunc: UserProviderFunc) : void,
     },
-    beforeAll(requestHandler : RequestHandler) : void,
+    beforeAll(requestHandler : express.RequestHandler) : void,
     model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }, configuration?: ModelConfiguration) : void,
     endpoint: {
-        get(path : string, requestHandler : RequestHandler) : void,
-        post(path : string, requestHandler : RequestHandler) : void,
-        put(path : string, requestHandler : RequestHandler) : void,
-        patch(path : string, requestHandler : RequestHandler) : void,
-        delete(path : string, requestHandler : RequestHandler) : void,
+        get(path : string, requestHandler : ManualEndpointHandler) : void,
+        post(path : string, requestHandler : ManualEndpointHandler) : void,
+        put(path : string, requestHandler : ManualEndpointHandler) : void,
+        patch(path : string, requestHandler : ManualEndpointHandler) : void,
+        delete(path : string, requestHandler : ManualEndpointHandler) : void,
     },
     startServer(port?: number) : Promise<void>,
 }
@@ -127,7 +129,7 @@ export type DatabaseFilter = {
 }
 
 //@internal
-export type RequestHandlerFactory = (model: Model, database: Database) => RequestHandler;
+export type RequestHandlerFactory = (model: Model, database: Database) => express.RequestHandler;
 
 //@internal
 export type DatabaseGetManyOptions = {
@@ -141,7 +143,7 @@ export type DatabaseGetManyOptions = {
 export type ManualEndpoint = {
     method: ManualEndpointHttpMethod,
     path: string,
-    requestHandler: express.RequestHandler,
+    requestHandler: ManualEndpointHandler,
 }
 
 //@internal

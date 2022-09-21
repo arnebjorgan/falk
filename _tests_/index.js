@@ -46,23 +46,23 @@ app.model('allow-bar-and-reads', {
     },
 });
 
-app.endpoint.get('/manual-endpoint', (req, res, next) => {
+app.endpoint.get('/manual-endpoint', (req, res, next, db) => {
     res.send('ok');
 });
 
-app.endpoint.post('/manual-endpoint', (req, res, next) => {
+app.endpoint.post('/manual-endpoint', (req, res, next, db) => {
     res.send('ok');
 });
 
-app.endpoint.put('/manual-endpoint', (req, res, next) => {
+app.endpoint.put('/manual-endpoint', (req, res, next, db) => {
     res.send('ok');
 });
 
-app.endpoint.patch('/manual-endpoint', (req, res, next) => {
+app.endpoint.patch('/manual-endpoint', (req, res, next, db) => {
     res.send('ok');
 });
 
-app.endpoint.delete('/manual-endpoint', (req, res, next) => {
+app.endpoint.delete('/manual-endpoint', (req, res, next, db) => {
     res.send('ok');
 });
 

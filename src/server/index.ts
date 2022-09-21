@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import swaggerUI from 'swagger-ui-express';
 import { Model, Database, Middleware, AuthenticationType, AuthenticationConfiguration, JwtConfiguration, ManualEndpoint } from '../definitions';
 import requestHandlers from './requestHandlers';
+import createManualEndpoint from './createManualEndpoint';
 import generateDocs from './generateDocs';
 
 export default async (configuration: {
@@ -76,7 +77,7 @@ export default async (configuration: {
 
     // Manual endpoints
     configuration.endpoints.forEach(endpoint => {
-        app[endpoint.method](endpoint.path, endpoint.requestHandler);
+        app[endpoint.method](endpoint.path, createManualEndpoint(endpoint.requestHandler, configuration.database));
         console.info(`☑ ${endpoint.method} ${endpoint.path} - manual endpoint registered`);
     });
 
