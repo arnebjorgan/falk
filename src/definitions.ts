@@ -31,12 +31,10 @@ export type Operation = {
     delete: boolean,
 }
 
-//@internal
 export type Database = {
     collection(modelName: string) : DatabaseCollection,
 }
 
-//@internal
 export type DatabaseCollection = {
     getById(id: string) : any,
     getMany(options: DatabaseGetManyOptions) : any,
