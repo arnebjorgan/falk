@@ -31,6 +31,56 @@ export type Operation = {
     delete: boolean,
 }
 
+//@internal
+export type Database = {
+    collection(modelName: string) : DatabaseCollection,
+}
+
+//@internal
+export type DatabaseCollection = {
+    getById(id: string) : any,
+    getMany(options: DatabaseGetManyOptions) : any,
+    create(data: any) : any,
+    update(id: string, data: any) : any,
+    put(id: string, data: any) : any,
+    delete(id: string) : any,
+}
+
+export enum DatabaseFilterOperator {
+    EQUAL = 'eq',
+    NOTEQUAL = 'ne',
+    LIKE = 'like',
+    GREATER = 'gt',
+    GREATEROREQUAL = 'gte',
+    LESS = 'lt',
+    LESSOREQUAL = 'lte',
+    IN = 'in',
+    NOTIN = 'nin',
+}
+
+export enum DatabaseSortDirection {
+    ASC = 'asc',
+    DESC = 'desc', 
+}
+
+export type DatabaseSorter = {
+    fieldName: string,
+    sortDirection: DatabaseSortDirection,
+}
+
+export type DatabaseFilter = {
+    key: string,
+    value: any,
+    operator: DatabaseFilterOperator,
+}
+
+export type DatabaseGetManyOptions = {
+    filters: DatabaseFilter[],
+    sorters: DatabaseSorter[],
+    _limit?: number,
+    _skip?: number,
+}
+
 export type ApiKeyConfiguration = {
     key: string,
     headerName: string,
@@ -97,47 +147,7 @@ export enum DatabaseType {
 }
 
 //@internal
-export enum DatabaseFilterOperator {
-    EQUAL = 'eq',
-    NOTEQUAL = 'ne',
-    LIKE = 'like',
-    GREATER = 'gt',
-    GREATEROREQUAL = 'gte',
-    LESS = 'lt',
-    LESSOREQUAL = 'lte',
-    IN = 'in',
-    NOTIN = 'nin',
-}
-
-//@internal
-export enum DatabaseSortDirection {
-    ASC = 'asc',
-    DESC = 'desc', 
-}
-
-//@internal
-export type DatabaseSorter = {
-    fieldName: string,
-    sortDirection: DatabaseSortDirection,
-}
-
-//@internal
-export type DatabaseFilter = {
-    key: string,
-    value: any,
-    operator: DatabaseFilterOperator,
-}
-
-//@internal
 export type RequestHandlerFactory = (model: Model, database: Database) => express.RequestHandler;
-
-//@internal
-export type DatabaseGetManyOptions = {
-    filters: DatabaseFilter[],
-    sorters: DatabaseSorter[],
-    _limit?: number,
-    _skip?: number,
-}
 
 //@internal
 export type ManualEndpoint = {
@@ -157,19 +167,4 @@ export type FieldTypeHelper = {
     swaggerTypeString : string,
     swaggerFormatString? : string,
     swaggerReadonly?: boolean,
-}
-
-//@internal
-export type Database = {
-    collection(modelName: string) : DatabaseCollection,
-}
-
-//@internal
-export type DatabaseCollection = {
-    getById(id: string) : any,
-    getMany(options: DatabaseGetManyOptions) : any,
-    create(data: any) : any,
-    update(id: string, data: any) : any,
-    put(id: string, data: any) : any,
-    delete(id: string) : any,
 }
