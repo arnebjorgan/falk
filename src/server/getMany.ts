@@ -43,11 +43,7 @@ export default (model: Model, database: Database) : RequestHandler  => {
                 const finalOperator = foundOperator ? foundOperator.operator : DatabaseFilterOperator.EQUAL;
                 const key = foundOperator ? queryKey.replace(foundOperator.key, '') : queryKey;
                 const parsedValue = parseFilterValue(key, req.query[queryKey], finalOperator);
-                filters.push({
-                    key,
-                    value: parsedValue,
-                    operator: finalOperator,
-                });
+                filters.push(database.filter.createFilter(key, finalOperator, parsedValue));
             }
         }
 
@@ -59,29 +55,25 @@ export default (model: Model, database: Database) : RequestHandler  => {
             sorterValues.forEach((sorterValue: string) => {
                 const foundSortDirection = querySorterDirectionMap.find(direction => sorterValue.endsWith(direction.key));
                 const fieldName = foundSortDirection ? sorterValue.replace(foundSortDirection.key, '') : sorterValue;
-                sorters.push({
-                    fieldName,
-                    sortDirection: foundSortDirection ? foundSortDirection.direction : DatabaseSortDirection.ASC,
-                });
+                sorters.push(database.sort(fieldName, foundSortDirection?.direction));
             });
         }
 
-        const _limit = req.query._limit ? parseFloat(req.query._limit as string) : undefined;
-        const _skip = req.query._skip ? parseFloat(req.query._skip as string) : undefined;
+        const limit = req.query._limit ? parseFloat(req.query._limit as string) : undefined;
+        const skip = req.query._skip ? parseFloat(req.query._skip as string) : undefined;
 
-        const getManyOptions : DatabaseGetManyOptions = {
+        const queryErrors = queryValidator({
             filters,
             sorters,
-            _limit,
-            _skip,
-        };
-        const queryErrors = queryValidator(getManyOptions);
+            _limit: limit,
+            _skip: skip
+        });
         
         if(queryErrors) {
             res.status(400).send(queryErrors);
         }
         else {
-            const result = await database.collection(model.name).getMany(getManyOptions);
+            const result = await database.collection(model.name).getMany(filters, { sorters, limit, skip });
             res.send(result);
         }
     };

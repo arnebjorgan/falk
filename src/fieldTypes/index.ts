@@ -4,7 +4,7 @@ import boolean from './boolean';
 import datetime from './datetime';
 import auto_created_at from './auto_created_at';
 import auto_updated_at from './auto_updated_at';
-import { Field, FieldConfiguration, FieldType } from '../definitions';
+import { FieldConfiguration, FieldType } from '../definitions';
 
 //Remember to add new type option to type FieldType in src/definitions.ts
 

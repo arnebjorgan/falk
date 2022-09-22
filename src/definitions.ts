@@ -33,11 +33,24 @@ export type Operation = {
 
 export type Database = {
     collection(modelName: string) : DatabaseCollection,
+    filter: {
+        eq(fieldName: string, value: any) : DatabaseFilter,
+        neq(fieldName: string, value: any) : DatabaseFilter,
+        like(fieldName: string, value: any) : DatabaseFilter,
+        gt(fieldName: string, value: any) : DatabaseFilter,
+        gte(fieldName: string, value: any) : DatabaseFilter,
+        lt(fieldName: string, value: any) : DatabaseFilter,
+        lte(fieldName: string, value: any) : DatabaseFilter,
+        in(fieldName: string, value: any) : DatabaseFilter,
+        nin(fieldName: string, value: any) : DatabaseFilter,
+        createFilter(fieldName: string, operator: DatabaseFilterOperator, value: any) : DatabaseFilter,
+    },
+    sort(fieldName: string, direction?: DatabaseSortDirection) : DatabaseSorter,
 }
 
 export type DatabaseCollection = {
     getById(id: string) : any,
-    getMany(options: DatabaseGetManyOptions) : any,
+    getMany(filters?: DatabaseFilter[], options?: DatabaseGetManyOptions) : any,
     create(data: any) : any,
     update(id: string, data: any) : any,
     put(id: string, data: any) : any,
@@ -63,7 +76,7 @@ export enum DatabaseSortDirection {
 
 export type DatabaseSorter = {
     fieldName: string,
-    sortDirection: DatabaseSortDirection,
+    direction: DatabaseSortDirection,
 }
 
 export type DatabaseFilter = {
@@ -72,11 +85,17 @@ export type DatabaseFilter = {
     operator: DatabaseFilterOperator,
 }
 
-export type DatabaseGetManyOptions = {
+export type GetManyQueryOptions = {
     filters: DatabaseFilter[],
     sorters: DatabaseSorter[],
     _limit?: number,
     _skip?: number,
+}
+
+export type DatabaseGetManyOptions = {
+    sorters?: DatabaseSorter[],
+    limit?: number,
+    skip?: number,
 }
 
 export type ApiKeyConfiguration = {

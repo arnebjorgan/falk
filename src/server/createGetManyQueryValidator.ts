@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import fieldTypes from '../fieldTypes';
-import { DatabaseFilterOperator, DatabaseGetManyOptions, Field, Model } from '../definitions';
+import { DatabaseFilterOperator, Field, GetManyQueryOptions, Model } from '../definitions';
 
 export default (model: Model) => {
     let validationObject : { [key: string] : any } = {};
@@ -16,7 +16,7 @@ export default (model: Model) => {
             });
             return errors;
         }),
-        sortDirection: Joi.any(),
+        direction: Joi.any(),
     }));
     
     let filterValueValidator = Joi.alternatives().conditional('key', { not: Joi.alternatives(...fieldNames), then: Joi.any() });
@@ -58,8 +58,8 @@ export default (model: Model) => {
     }));
 
     const validationSchema = Joi.object(validationObject);
-    return (getManyOptions: DatabaseGetManyOptions) : string | null =>  {
-        const { error } = validationSchema.validate(getManyOptions, { abortEarly: false });
+    return (options: GetManyQueryOptions) : string | null =>  {
+        const { error } = validationSchema.validate(options, { abortEarly: false });
         return error ? error.details.map((detail: { message: any; }) => detail.message).join(', ') : null;
     };
 };

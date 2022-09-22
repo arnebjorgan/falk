@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import fieldTypes from '../fieldTypes';
-import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseGetManyOptions, DatabaseSorter, Field, Model } from '../definitions';
+import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseSortDirection, DatabaseGetManyOptions, DatabaseSorter, Field, Model } from '../definitions';
 
 export default async (connectionString: any, modelInput: Model[]) : Promise<Database> => {
     // @ts-ignore (configuration is already validated)
@@ -14,7 +14,21 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
         const schema = new mongoose.Schema(schemaObject, { versionKey: false });
         models[model.name] = mongoose.model(model.name, schema);
     });
+
     return {
+        filter: {
+            eq(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.EQUAL }},
+            neq(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.NOTEQUAL }},
+            like(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.LIKE }},
+            gt(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.GREATER }},
+            gte(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.GREATEROREQUAL }},
+            lt(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.LESS }},
+            lte(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.LESSOREQUAL }},
+            in(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.IN }},
+            nin(fieldName: string, value: any) { return { key: fieldName, value, operator: DatabaseFilterOperator.NOTIN }},
+            createFilter(fieldName: string, operator: DatabaseFilterOperator, value: any) { return { key: fieldName, value, operator }},
+        },
+        sort(fieldName: string, direction: DatabaseSortDirection = DatabaseSortDirection.ASC) { return { fieldName, direction }},
         collection(modelName: string) {
             return {
                 getById(id: string) {
@@ -24,8 +38,8 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
                     }
                     return models[modelName].findById(id);
                 },
-                getMany(options: DatabaseGetManyOptions) {
-                    const mongodbFilter = options.filters.reduce((acc: any, current: DatabaseFilter) => {
+                getMany(filters: DatabaseFilter[] = [], options?: DatabaseGetManyOptions) {
+                    const mongodbFilter = filters.reduce((acc: any, current: DatabaseFilter) => {
                         if(current.operator === DatabaseFilterOperator.EQUAL) {
                             acc[current.key] = current.value;
                             return acc;
@@ -57,15 +71,15 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
                         return acc;
                     }, {});
                     let query = models[modelName].find(mongodbFilter);
-                    if(options.sorters.length) {
+                    if(options?.sorters?.length) {
                         const mongodbSorter = options.sorters.reduce((acc: any, current: DatabaseSorter) => {
-                            acc[current.fieldName] = current.sortDirection;
+                            acc[current.fieldName] = current.direction;
                             return acc;
                         }, {});
                         query = query.sort(mongodbSorter);
                     }
-                    if(options._limit) query = query.limit(options._limit);
-                    if(options._skip) query = query.skip(options._skip);
+                    if(options?.limit) query = query.limit(options.limit);
+                    if(options?.skip) query = query.skip(options.skip);
                     return query;
                 },
                 create(data: any) {
