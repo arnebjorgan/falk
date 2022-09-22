@@ -20,8 +20,10 @@ export const createFieldHelper = {
     number: createField.bind(this, 'number'),
     boolean: createField.bind(this, 'boolean'),
     datetime: createField.bind(this, 'datetime'),
-    autoCreatedAt: createField.bind(this, 'auto_created_at'),
-    autoUpdatedAt: createField.bind(this, 'auto_updated_at'),
+    auto: {
+        createdAt: createField.bind(this, 'auto_created_at'),
+        updatedAt: createField.bind(this, 'auto_updated_at'),
+    },
 };
 
 const fieldTypes = {

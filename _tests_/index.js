@@ -25,8 +25,8 @@ app.model('cars', {
 
 app.model('brands', {
     name: falk.fieldType.string(),
-    created_at: falk.fieldType.autoCreatedAt(),
-    updated_at: falk.fieldType.autoUpdatedAt(),
+    created_at: falk.fieldType.auto.createdAt(),
+    updated_at: falk.fieldType.auto.updatedAt(),
 },{
     expose: true,
 });
