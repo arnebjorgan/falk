@@ -4,7 +4,7 @@ import { Field, Model } from '../definitions';
 
 export default (model: Model, options = { merge: false }) => {
     let validationObject : { [key: string] : any } = {};
-    model.fields.forEach((field: Field) => {
+    model.fields.filter(field => !fieldTypes[field.type].autoField).forEach((field: Field) => {
         let fieldValidator = fieldTypes[field.type].validator;
         if(field.required && !options.merge) {
             fieldValidator = fieldValidator.required();

@@ -184,4 +184,8 @@ export type FieldTypeHelper = {
     swaggerTypeString : string,
     swaggerFormatString? : string,
     swaggerReadonly?: boolean,
+    autoField?: {
+        getCreateValue?: () => any,
+        getUpdateValue?: () => any,
+    },
 }

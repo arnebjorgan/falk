@@ -5,14 +5,17 @@ import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseSortDirection
 export default async (connectionString: any, modelInput: Model[]) : Promise<Database> => {
     // @ts-ignore (configuration is already validated)
     await mongoose.connect(connectionString);
-    let models : { [key: string]: mongoose.Model<any> } = {};
+    let models : { [key: string]: { userModel: Model, dbModel: mongoose.Model<any> }} = {};
     modelInput.forEach((model: Model) => {
         const schemaObject = model.fields.reduce((acc: any, field: Field) => {
             acc[field.name] = fieldTypes[field.type].mongoDbType;
             return acc;
         }, {});
         const schema = new mongoose.Schema(schemaObject, { versionKey: false });
-        models[model.name] = mongoose.model(model.name, schema);
+        models[model.name] = {
+            userModel: model,
+            dbModel: mongoose.model(model.name, schema),
+        };
     });
 
     return {
@@ -36,7 +39,7 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
                     if(!isValidId) {
                         return null;
                     }
-                    return models[modelName].findById(id);
+                    return models[modelName].dbModel.findById(id);
                 },
                 getMany(filters: DatabaseFilter[] = [], options?: DatabaseGetManyOptions) {
                     const mongodbFilter = filters.reduce((acc: any, current: DatabaseFilter) => {
@@ -70,7 +73,7 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
                         }
                         return acc;
                     }, {});
-                    let query = models[modelName].find(mongodbFilter);
+                    let query = models[modelName].dbModel.find(mongodbFilter);
                     if(options?.sorters?.length) {
                         const mongodbSorter = options.sorters.reduce((acc: any, current: DatabaseSorter) => {
                             acc[current.fieldName] = current.direction;
@@ -83,28 +86,39 @@ export default async (connectionString: any, modelInput: Model[]) : Promise<Data
                     return query;
                 },
                 create(data: any) {
-                    return models[modelName].create(data);
+                    models[modelName].userModel.fields.forEach(field => {
+                        if(fieldTypes[field.type].autoField?.getCreateValue) data[field.name] = fieldTypes[field.type].autoField?.getCreateValue?.();
+                        if(fieldTypes[field.type].autoField?.getUpdateValue) data[field.name] = fieldTypes[field.type].autoField?.getUpdateValue?.();
+                    });
+                    return models[modelName].dbModel.create(data);
                 },
                 update(id: string, data: any) {
                     const isValidId = mongoose.isValidObjectId(id);
                     if(!isValidId) {
                         return null;
                     }
-                    return models[modelName].findByIdAndUpdate(id, data, { new: true });
+                    models[modelName].userModel.fields.forEach(field => {
+                        if(fieldTypes[field.type].autoField?.getUpdateValue) data[field.name] = fieldTypes[field.type].autoField?.getUpdateValue?.();
+                    });
+                    return models[modelName].dbModel.findByIdAndUpdate(id, data, { new: true });
                 },
                 put(id: string, data: any) {
                     const isValidId = mongoose.isValidObjectId(id);
                     if(!isValidId) {
                         return null;
                     }
-                    return models[modelName].findByIdAndUpdate(id, { ...data, _id: id }, { new: true, upsert: true, overwrite: true });
+                    models[modelName].userModel.fields.forEach(field => {
+                        if(fieldTypes[field.type].autoField?.getCreateValue) data[field.name] = fieldTypes[field.type].autoField?.getCreateValue?.();
+                        if(fieldTypes[field.type].autoField?.getUpdateValue) data[field.name] = fieldTypes[field.type].autoField?.getUpdateValue?.();
+                    });
+                    return models[modelName].dbModel.findByIdAndUpdate(id, { ...data, _id: id }, { new: true, upsert: true, overwrite: true });
                 },
                 delete(id: string) {
                     const isValidId = mongoose.isValidObjectId(id);
                     if(!isValidId) {
                         return null;
                     }
-                    return models[modelName].findByIdAndDelete(id);
+                    return models[modelName].dbModel.findByIdAndDelete(id);
                 },
             }
         },

@@ -10,6 +10,10 @@ const helper : FieldTypeHelper = {
     swaggerTypeString: 'string',
     swaggerFormatString: 'date-time',
     swaggerReadonly: true,
+    autoField: {
+        getCreateValue() { return new Date() },
+        getUpdateValue() { return new Date() },
+    },
 }
 
 export default helper;
