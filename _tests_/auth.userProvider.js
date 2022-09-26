@@ -14,11 +14,8 @@ app.authentication.userProvider((req, acceptUser, rejectUser) => {
 
 app.model('cars', {
     userId: falk.fieldType.string(),
-}, {
-    expose: true,
-    allow: (data, operation, user) => {
-        return !!user?.userId;
-    },
+}).expose((data, operation, user, db) => {
+    return !!user?.userId;
 });
 
 app.startServer();

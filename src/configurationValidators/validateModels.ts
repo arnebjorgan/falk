@@ -11,7 +11,8 @@ const validationSchema = Joi.array().items(
             required: Joi.boolean(),
             validator: Joi.function().arity(1),
         })).min(1).required(),
-        expose: Joi.boolean(),
+        isExposed: Joi.boolean(),
+        expose: Joi.function(),
         allow: Joi.function(),
     }).required()
 ).min(1);

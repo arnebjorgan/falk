@@ -14,12 +14,12 @@ export type FieldConfiguration = {
 export type Model = {
     name: string,
     fields: Field[],
-} & ModelConfiguration;
+    isExposed?: boolean,
+    allow?: AllowFunction,
+    expose: (allowFunction: AllowFunction) => void
+};
 
-export type ModelConfiguration = {
-    expose?: boolean,
-    allow?: (data: { [key:string]:unknown }, operation : Operation, user?: { [key: string]: any }) => boolean,
-}
+export type AllowFunction = (data: { [key:string]:unknown }, operation : Operation, user: { [key: string]: any }, database: Database) => boolean;
 
 export type Operation = {
     read: boolean,
@@ -126,7 +126,7 @@ export type App = {
         userProvider(providerFunc: UserProviderFunc) : void,
     },
     beforeAll(requestHandler : express.RequestHandler) : void,
-    model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }, configuration?: ModelConfiguration) : void,
+    model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model,
     endpoint: {
         get(path : string, requestHandler : ManualEndpointHandler) : void,
         post(path : string, requestHandler : ManualEndpointHandler) : void,

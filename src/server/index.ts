@@ -61,7 +61,7 @@ export default async (configuration: {
 
     // Models
     configuration.models.forEach(model => {
-        if(model.expose) {
+        if(model.isExposed) {
             app.get(`/${model.name}/:id`, requestHandlers.getById(model, configuration.database));
             app.get(`/${model.name}`, requestHandlers.getMany(model, configuration.database));
             app.post(`/${model.name}`, requestHandlers.post(model, configuration.database));

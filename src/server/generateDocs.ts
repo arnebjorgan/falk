@@ -2,7 +2,7 @@ import fieldTypes from '../fieldTypes';
 import { Field, ManualEndpoint, Model } from '../definitions';
 
 export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object => {
-    const models = allModels.filter(model => model.expose);
+    const models = allModels.filter(model => model.isExposed);
     return {
         swagger: '2.0',
         tags: models.map(model => model.name).concat(manualEndpoints.length ? ['Manual endpoints'] : []),

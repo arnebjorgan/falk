@@ -19,17 +19,13 @@ app.model('cars', {
     electric: falk.fieldType.boolean(),
     registered_date: falk.fieldType.datetime(),
     bodywork: falk.fieldType.string({ validator: val => ['suv', 'sedan', 'station_wagon'].includes(val) }),
-},{
-    expose: true,
-});
+}).expose(() => true);
 
 app.model('brands', {
     name: falk.fieldType.string(),
     created_at: falk.fieldType.auto.createdAt(),
     updated_at: falk.fieldType.auto.updatedAt(),
-},{
-    expose: true,
-});
+}).expose(() => true);
 
 app.model('not-exposed', {
     foo: falk.fieldType.string(),
@@ -37,13 +33,10 @@ app.model('not-exposed', {
 
 app.model('allow-bar-and-reads', {
     foo: falk.fieldType.string(),
-}, {
-    expose: true,
-    allow: (data, operation, user) => {
-        if(data.foo === 'bar') return true;
-        else if(operation.read) return true;
-        else return false;
-    },
+}).expose((data, operation, user, db) => {
+    if(data.foo === 'bar') return true;
+    else if(operation.read) return true;
+    else return false;
 });
 
 app.endpoint.get('/manual-endpoint', (req, res, next, db) => {

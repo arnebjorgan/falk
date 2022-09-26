@@ -2,8 +2,9 @@ import express from 'express';
 import createDatabase from './database';
 import createAuthentication from './authentication';
 import server from './server';
+import createModel from './models';
 import { createFieldHelper } from './fieldTypes';
-import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, Field, FieldConfiguration, FieldType, JwtConfiguration, ManualEndpoint, ManualEndpointHandler, Middleware, Model, ModelConfiguration, UserProviderFunc } from './definitions';
+import { ApiKeyConfiguration, App, AuthenticationConfiguration, AuthenticationType, Database, DatabaseConfiguration, DatabaseType, Field, FieldConfiguration, FieldType, JwtConfiguration, ManualEndpoint, ManualEndpointHandler, Middleware, Model, UserProviderFunc } from './definitions';
 import validateModels from './configurationValidators/validateModels';
 import validateDatabaseConfiguration from './configurationValidators/validateDatabaseConfiguration';
 import validateServerConfiguration from './configurationValidators/validateServerConfiguration';
@@ -50,7 +51,7 @@ export default () : App => {
         beforeAll(beforeAll : express.RequestHandler) : void {
             beforeAlls.push(beforeAll)
         },
-        model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }, configuration?: ModelConfiguration) : void {
+        model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model {
             const fieldArray : Field[] = [];
             for(const [key, value] of Object.entries(fields)) {
                 fieldArray.push({
@@ -59,11 +60,9 @@ export default () : App => {
                     ...value.configuration,
                 });
             }
-            models.push({
-                name,
-                fields: fieldArray,
-                ...configuration, 
-            });
+            let model = createModel(name, fieldArray);
+            models.push(model);
+            return model;
         },
         endpoint:{
             get: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'get', path, requestHandler }),

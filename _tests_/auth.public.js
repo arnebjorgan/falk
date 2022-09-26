@@ -5,8 +5,6 @@ app.authentication.public();
 
 app.model('cars', {
     electric: falk.fieldType.boolean(),
-}, {
-    expose: true,
-});
+}).expose(() => true);
 
 app.startServer();
