@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import { Database, Model, Operation, RequestHandlerFactory } from '../definitions';
+import { Database, Model, ModelHandlerFactory, RequestHandlerFactory } from '../definitions';
 import getById from './getById';
 import getMany from './getMany';
 import post from './post';
@@ -7,17 +7,29 @@ import put from './put';
 import patch from './patch';
 import del from './del';
 
-const requestHandler = (handler : RequestHandlerFactory, operation: Operation) : RequestHandlerFactory => {
+const requestHandler = (handler : ModelHandlerFactory) : RequestHandlerFactory => {
     return (model: Model, database: Database) : RequestHandler => {
-        const coreHandler = handler(model, database);
+        const modelHandler = handler(model, database);
         return async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
             try {
-                if(model.allow && !model.allow(req.body, operation, res.locals._falk_user, database)) {
-                    res.status(403).send('Operation forbidden');
+                let prepareResult;
+                if(model.allow) {
+                    prepareResult = await modelHandler.prepareHandle(req);
+                    if(prepareResult.error) {
+                        res.status(prepareResult.errorStatus ? prepareResult.errorStatus : 500).send(prepareResult.error);
+                        return;
+                    }
+                    const operationIsAllowed = await model.allow({
+                        auth: res.locals._falk_user,
+                        resource: prepareResult.newResource,
+                        baseRequest: req,
+                    }, prepareResult.oldResource, prepareResult.operation, database);
+                    if(!operationIsAllowed) {
+                        res.status(403).send('Operation forbidden');
+                        return;
+                    }
                 }
-                else {
-                    await coreHandler(req, res, next);
-                }
+                await modelHandler.handle(req, res, next, prepareResult);
             } catch(e) {
                 console.error(e);
                 res.status(500).send('An unexpected error occured');
@@ -27,10 +39,10 @@ const requestHandler = (handler : RequestHandlerFactory, operation: Operation) :
 };
 
 export default {
-    getById: requestHandler(getById, { read: true, get: true, list: false, write: false, create: false, update: false, delete: false, }),
-    getMany: requestHandler(getMany, { read: true, get: false, list: true, write: false, create: false, update: false, delete: false, }),
-    post: requestHandler(post, { read: false, get: false, list: false, write: true, create: true, update: false, delete: false, }),
-    put: requestHandler(put, { read: false, get: false, list: false, write: true, create: false, update: true, delete: false, }),
-    patch: requestHandler(patch, { read: false, get: false, list: false, write: true, create: false, update: true, delete: false, }),
-    del: requestHandler(del, { read: false, get: false, list: false, write: true, create: false, update: false, delete: true, }),
+    getById: requestHandler(getById),
+    getMany: requestHandler(getMany),
+    post: requestHandler(post),
+    put: requestHandler(put),
+    patch: requestHandler(patch),
+    del: requestHandler(del),
 };

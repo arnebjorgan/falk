@@ -19,7 +19,7 @@ export type Model = {
     expose: (allowFunction: AllowFunction) => void
 };
 
-export type AllowFunction = (data: { [key:string]:unknown }, operation : Operation, user: { [key: string]: any }, database: Database) => boolean;
+export type AllowFunction = (request: ModelRequest, resource: Resource|null, operation: Operation, database: Database) => Promise<boolean> | boolean;
 
 export type Operation = {
     read: boolean,
@@ -110,6 +110,17 @@ export type JwtConfiguration = {
     tokenExpirationMS?: number,
 }
 
+export type Resource = {
+    id?: string,
+    data?: unknown,
+}
+
+export type ModelRequest = {
+    auth?: unknown,
+    resource: Resource,
+    baseRequest: express.Request,
+}
+
 export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: unknown) => void, rejectUser: () => void) => Promise<void> | void;
 
 export type ManualEndpointHandler = (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) => Promise<void> | void;
@@ -135,6 +146,25 @@ export type App = {
         delete(path : string, requestHandler : ManualEndpointHandler) : void,
     },
     startServer(port?: number) : Promise<void>,
+}
+
+//@internal
+export type PrepareHandleResult = {
+    errorStatus?: number,
+    error?: string,
+    newResource: Resource,
+    oldResource: Resource|null,
+    operation: Operation,
+    getManyFilters: DatabaseFilter[],
+    getManySorters: DatabaseSorter[],
+    getManyLimit?: number,
+    getManySkip?: number,
+}
+
+//@internal
+export type ModelHandler = {
+    prepareHandle(req: express.Request) : Promise<PrepareHandleResult>,
+    handle: (req: express.Request, res: express.Response, next: express.NextFunction, prepareHandleResult?: PrepareHandleResult) => void,
 }
 
 //@internal
@@ -165,6 +195,9 @@ export enum DatabaseType {
 
 //@internal
 export type RequestHandlerFactory = (model: Model, database: Database) => express.RequestHandler;
+
+//@internal
+export type ModelHandlerFactory = (model: Model, database: Database) => ModelHandler;
 
 //@internal
 export type ManualEndpoint = {
