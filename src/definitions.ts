@@ -106,13 +106,13 @@ export type ApiKeyConfiguration = {
 export type JwtConfiguration = {
     secret: string,
     authEndpoint: string,
-    authCheck: (data: { [key:string]:unknown }, acceptUser: (userData?: { [key: string]: any }) => Promise<void>, rejectUser: () => Promise<void>) => Promise<void>,
+    authCheck: (data: { [key:string]: any }, acceptUser: (userData?: { [key: string]: any }) => Promise<void>, rejectUser: () => Promise<void>) => Promise<void>,
     tokenExpirationMS?: number,
 }
 
 export type Resource = {
     id?: string,
-    data?: unknown,
+    data?: any,
 }
 
 export type ModelRequest = {
@@ -121,7 +121,7 @@ export type ModelRequest = {
     baseRequest: express.Request,
 }
 
-export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: unknown) => void, rejectUser: () => void) => Promise<void> | void;
+export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: any) => void, rejectUser: () => void) => Promise<void> | void;
 
 export type ManualEndpointHandler = (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) => Promise<void> | void;
 
