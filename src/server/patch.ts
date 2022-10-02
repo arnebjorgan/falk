@@ -40,11 +40,14 @@ export default (model: Model, database: Database) : ModelHandler  => {
                     result.error = getNotFoundMessage(req.params.id);
                 }
                 else {
-                    result.newResource = {
+                    result.newResource.data = {
                         ...oldResource,
                         ...req.body,
                     };
-                    result.oldResource = oldResource;
+                    result.oldResource = {
+                        id: req.params.id,
+                        data: oldResource,
+                    };
                 }
             }
             return result;
