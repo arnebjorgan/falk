@@ -116,7 +116,7 @@ export type Resource = {
 }
 
 export type ModelRequest = {
-    auth?: unknown,
+    auth?: any,
     resource: Resource,
     baseRequest: express.Request,
 }
