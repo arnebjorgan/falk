@@ -138,13 +138,11 @@ export type App = {
     },
     middleware(requestHandler : express.RequestHandler) : void,
     model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model,
-    endpoint: {
-        get(path : string, requestHandler : ManualEndpointHandler) : void,
-        post(path : string, requestHandler : ManualEndpointHandler) : void,
-        put(path : string, requestHandler : ManualEndpointHandler) : void,
-        patch(path : string, requestHandler : ManualEndpointHandler) : void,
-        delete(path : string, requestHandler : ManualEndpointHandler) : void,
-    },
+    get(path : string, requestHandler : ManualEndpointHandler) : void,
+    post(path : string, requestHandler : ManualEndpointHandler) : void,
+    put(path : string, requestHandler : ManualEndpointHandler) : void,
+    patch(path : string, requestHandler : ManualEndpointHandler) : void,
+    delete(path : string, requestHandler : ManualEndpointHandler) : void,
     startServer(port?: number) : Promise<void>,
 }
 

@@ -64,13 +64,11 @@ export default () : App => {
             models.push(model);
             return model;
         },
-        endpoint:{
-            get: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'get', path, requestHandler }),
-            post: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'post', path, requestHandler }),
-            put: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'put', path, requestHandler }),
-            patch: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'patch', path, requestHandler }),
-            delete: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'delete', path, requestHandler }),
-        },
+        get: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'get', path, requestHandler }),
+        post: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'post', path, requestHandler }),
+        put: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'put', path, requestHandler }),
+        patch: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'patch', path, requestHandler }),
+        delete: (path: string, requestHandler : ManualEndpointHandler) => endpoints.push({ method: 'delete', path, requestHandler }),
         async startServer(port?: number) : Promise<void> {
             validateDatabaseConfiguration(databaseType, databaseConfiguration);
             validateAuthentication(authenticationType, authenticationConfiguration)
