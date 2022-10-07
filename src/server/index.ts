@@ -1,18 +1,13 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import swaggerUI from 'swagger-ui-express';
-import { Model, Database, Middleware, AuthenticationType, AuthenticationConfiguration, JwtConfiguration, ManualEndpoint } from '../definitions';
+import { Model, Database, Middleware, ManualEndpoint } from '../definitions';
 import requestHandlers from './requestHandlers';
 import createManualEndpoint from './createManualEndpoint';
 import generateDocs from './generateDocs';
 
 export default async (configuration: {
     database: Database,
-    authentication: {
-        type: AuthenticationType,
-        middleware: Middleware,
-        configuration: AuthenticationConfiguration,
-    },
+    authMiddleware?: Middleware,
     middlewares: express.RequestHandler[],
     models: Model[],
     endpoints: ManualEndpoint[],
@@ -24,37 +19,15 @@ export default async (configuration: {
     app.use(express.json());
 
     // Auth
-    app.use(configuration.authentication.middleware);
-    if(configuration.authentication.type === AuthenticationType.JWT) {
-        const jwtConfiguration = configuration.authentication.configuration as JwtConfiguration;
-        app.post(jwtConfiguration.authEndpoint, async(req, res) => {
-            try {
-                await jwtConfiguration.authCheck(
-                    req.body,
-                    async (userData?: { [key: string]: any; }) => {
-                        const token = jwt.sign(userData || {}, jwtConfiguration.secret, { expiresIn: (jwtConfiguration.tokenExpirationMS || 360000) / 1000 });
-                        res.status(200).send({
-                            token,
-                            userData,
-                        });
-                    },
-                    async () => {
-                        res.status(401).send('Authentication failed');
-                    },
-                );
-            } catch(e) {
-                res.status(401).send('Unexpected error when authenticating');
-            }
-        });
-    }
-    if(configuration.authentication.type === AuthenticationType.PUBLIC) {
-        console.info(`No authentication, all endpoints are public ⚠️`)
+    if(configuration.authMiddleware) {
+        console.info(`Auth enabled 🔒`)
+        app.use(configuration.authMiddleware);
     }
     else {
-        console.info(`Authentication type ${configuration.authentication.type} enabled 🔒`)
+        console.info(`No auth, all endpoints are public ⚠️`)
     }
 
-    //Before all handlers
+    //Middlware
     configuration.middlewares.forEach(middleware => {
         app.use(middleware);
     });

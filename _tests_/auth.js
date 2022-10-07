@@ -1,7 +1,7 @@
 const falk = require('../dist/index');
 const app = falk.default();
 
-app.authentication.userProvider((req, acceptUser, rejectUser) => {
+app.auth((req, acceptUser, rejectUser) => {
     if(req.body.userId) {
         acceptUser({
             userId: req.body.userId,

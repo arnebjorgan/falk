@@ -20,7 +20,7 @@ const requestHandler = (handler : ModelHandlerFactory) : RequestHandlerFactory =
                         return;
                     }
                     const operationIsAllowed = await model.allow({
-                        auth: res.locals._falk_user,
+                        auth: res.locals._falk_auth,
                         resource: prepareResult.newResource,
                         baseRequest: req,
                     }, prepareResult.oldResource, prepareResult.operation, database);

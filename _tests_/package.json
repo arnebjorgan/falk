@@ -6,15 +6,9 @@
   "scripts": {
     "dev:memory": "nodemon index.js memory",
     "dev:mongodb": "nodemon index.js mongodb",
-    "dev:auth.public": "nodemon auth.public.js",
-    "dev:auth.apiKey": "nodemon auth.apiKey.js",
-    "dev:auth.jwt": "nodemon auth.jwt.js",
-    "dev:auth.userProvider": "nodemon auth.userProvider.js",
+    "dev:auth": "nodemon auth.js",
     "test:integration:crud": "jest integration.crud.test.js",
-    "test:integration:auth:public": "jest integration.auth.public.test.js",
-    "test:integration:auth:apiKey": "jest integration.auth.apiKey.test.js",
-    "test:integration:auth:jwt": "jest integration.auth.jwt.test.js",
-    "test:integration:auth:userProvider": "jest integration.auth.userProvider.test.js",
+    "test:integration:auth": "jest integration.auth.test.js",
     "test:watch": "jest --watch"
   },
   "keywords": [],

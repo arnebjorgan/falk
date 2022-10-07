@@ -98,18 +98,6 @@ export type DatabaseGetManyOptions = {
     skip?: number,
 }
 
-export type ApiKeyConfiguration = {
-    key: string,
-    headerName: string,
-}
-
-export type JwtConfiguration = {
-    secret: string,
-    authEndpoint: string,
-    authCheck: (data: { [key:string]: any }, acceptUser: (userData?: { [key: string]: any }) => Promise<void>, rejectUser: () => Promise<void>) => Promise<void>,
-    tokenExpirationMS?: number,
-}
-
 export type Resource = {
     id?: string,
     data?: any,
@@ -121,7 +109,7 @@ export type ModelRequest = {
     baseRequest: express.Request,
 }
 
-export type UserProviderFunc = (req: Express.Request, acceptUser: (userData?: any) => void, rejectUser: () => void) => Promise<void> | void;
+export type AuthFunc = (req: Express.Request, accept: (userData?: any) => void, reject: () => void) => Promise<void> | void;
 
 export type ManualEndpointHandler = (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) => Promise<void> | void;
 
@@ -130,12 +118,7 @@ export type App = {
         memory() : void,
         mongodb(connectionString: string) : void,
     },
-    authentication: {
-        public() : void,
-        apiKey(configuration: ApiKeyConfiguration) : void,
-        jwt(configuration: JwtConfiguration) : void,
-        userProvider(providerFunc: UserProviderFunc) : void,
-    },
+    auth(authFunc: AuthFunc) : void,
     middleware(requestHandler : express.RequestHandler) : void,
     model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model,
     get(path : string, requestHandler : ManualEndpointHandler) : void,
@@ -172,18 +155,7 @@ export type FieldType = 'string'|'number'|'boolean'|'datetime'|'auto_created_at'
 export type Middleware = (req: express.Request, res: express.Response, next: express.NextFunction) => void;
 
 //@internal
-export enum AuthenticationType {
-    PUBLIC = 'public',
-    API_KEY = 'apiKey',
-    JWT = 'jwt',
-    USER_PROVIDER = 'userProvider',
-}
-
-//@internal
 export type DatabaseConfiguration = undefined | string;
-
-//@internal
-export type AuthenticationConfiguration = undefined | ApiKeyConfiguration | JwtConfiguration | UserProviderFunc;
 
 //@internal
 export enum DatabaseType {
