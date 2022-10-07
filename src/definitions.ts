@@ -136,7 +136,7 @@ export type App = {
         jwt(configuration: JwtConfiguration) : void,
         userProvider(providerFunc: UserProviderFunc) : void,
     },
-    beforeAll(requestHandler : express.RequestHandler) : void,
+    middleware(requestHandler : express.RequestHandler) : void,
     model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model,
     endpoint: {
         get(path : string, requestHandler : ManualEndpointHandler) : void,

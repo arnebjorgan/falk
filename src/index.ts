@@ -17,7 +17,7 @@ export default () : App => {
     let databaseConfiguration : DatabaseConfiguration;
     let authenticationType = AuthenticationType.PUBLIC;
     let authenticationConfiguration : AuthenticationConfiguration;
-    const beforeAlls : express.RequestHandler[] = [];
+    const middlewares : express.RequestHandler[] = [];
     const models : Model[] = [];
     const endpoints : ManualEndpoint[] = [];
 
@@ -48,8 +48,8 @@ export default () : App => {
                 authenticationConfiguration = userProviderFunc;
             },
         },
-        beforeAll(beforeAll : express.RequestHandler) : void {
-            beforeAlls.push(beforeAll)
+        middleware(middleware : express.RequestHandler) : void {
+            middlewares.push(middleware)
         },
         model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model {
             const fieldArray : Field[] = [];
@@ -86,7 +86,7 @@ export default () : App => {
                     middleware: authenticationMiddleware,
                     configuration: authenticationConfiguration,
                 },
-                beforeAlls,
+                middlewares,
                 models,
                 endpoints,
                 port: finalPort,

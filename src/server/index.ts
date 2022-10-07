@@ -13,7 +13,7 @@ export default async (configuration: {
         middleware: Middleware,
         configuration: AuthenticationConfiguration,
     },
-    beforeAlls: express.RequestHandler[],
+    middlewares: express.RequestHandler[],
     models: Model[],
     endpoints: ManualEndpoint[],
     port: number,
@@ -55,8 +55,8 @@ export default async (configuration: {
     }
 
     //Before all handlers
-    configuration.beforeAlls.forEach(beforeAll => {
-        app.use(beforeAll);
+    configuration.middlewares.forEach(middleware => {
+        app.use(middleware);
     });
 
     // Models
