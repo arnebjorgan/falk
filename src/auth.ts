@@ -1,13 +1,15 @@
 import express from 'express';
-import { AuthFunc, Middleware } from '../definitions';
+import { AuthFunc } from './definitions';
+import { Database } from './definitions';
 
-export default (authFunc : AuthFunc) : Middleware => {
+export default (authFunc: AuthFunc, database: Database) => {
     return async (req: express.Request, res: express.Response, next: express.NextFunction) : Promise<void> => {
         try {
             await authFunc(
                 req,
-                (userData?: unknown) => {
-                    res.locals._falk_auth = userData;
+                database,
+                (auth?: unknown) => {
+                    res.locals._falk_auth = auth;
                     next();
                 },
                 () => {

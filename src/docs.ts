@@ -1,12 +1,14 @@
-import fieldTypes from '../fieldTypes';
-import { Field, ManualEndpoint, Model } from '../definitions';
+import fieldTypes from './field';
+import { Endpoint, Field, Model } from './definitions';
 
-export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object => {
+//TODO fix
+
+export default (allModels: Model[], endpoints: Endpoint[]) : Object => {
     const models = allModels.filter(model => model.isExposed);
     return {
         swagger: '2.0',
-        tags: models.map(model => model.name).concat(manualEndpoints.length ? ['Manual endpoints'] : []),
-        paths: getPaths(models, manualEndpoints),
+        tags: models.map(model => model.name).concat(endpoints.length ? ['Manual endpoints'] : []),
+        paths: getPaths(models, endpoints),
         definitions: models.reduce((acc: any, model: Model) => {
             acc[model.name] = {
                 type: 'object',
@@ -24,7 +26,7 @@ export default (allModels: Model[], manualEndpoints: ManualEndpoint[]) : Object 
     };
 };
 
-const getPaths = (models: any[], manualEndpoints: ManualEndpoint[]) => {
+const getPaths = (models: any[], endpoints: Endpoint[]) => {
     let result : any = {};
     models.forEach((model: any) => {
         result[`/${model.name}`] = {
@@ -170,7 +172,7 @@ const getPaths = (models: any[], manualEndpoints: ManualEndpoint[]) => {
             },
         };
     });
-    manualEndpoints.forEach(endpoint => {
+    endpoints.forEach(endpoint => {
         if(!result[endpoint.path]) result[endpoint.path] = {};
         result[endpoint.path][endpoint.method] = {
             tags: ['Manual endpoints'],

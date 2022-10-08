@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import fieldTypes from '../fieldTypes';
+import fieldTypes from '../field';
 import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseGetManyOptions, DatabaseSortDirection, DatabaseSorter, Model, ModelHandler, PrepareHandleResult } from '../definitions';
-import createGetManyQueryValidator from './createGetManyQueryValidator';
+import createGetManyQueryValidator from './getManyQueryValidator';
 const queryFilterOperatorMap = [
     {  key: '|like', operator: DatabaseFilterOperator.LIKE, },
     {  key: '|ne', operator: DatabaseFilterOperator.NOTEQUAL, },
@@ -17,6 +17,8 @@ const querySorterDirectionMap = [
     { key: '|desc', direction: DatabaseSortDirection.DESC, },    
 ];
 const specialQueryKeys = ['_sort', '_limit', '_skip'];
+
+//TODO
 
 export default (model: Model, database: Database) : ModelHandler  => {
 

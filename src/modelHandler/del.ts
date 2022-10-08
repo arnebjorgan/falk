@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { Database, Model, ModelHandler, PrepareHandleResult } from '../definitions';
 
+//TODO
+
 export default (model: Model, database: Database) : ModelHandler  => {
-    
+
     const getNotFoundMessage = (id: string) => {
         return `Could not find ${model.name} with id ${id}`
     };
@@ -16,13 +18,13 @@ export default (model: Model, database: Database) : ModelHandler  => {
                 },
                 oldResource: null,
                 operation: {
-                    read: true,
-                    get: true,
+                    read: false,
+                    get: false,
                     list: false,
-                    write: false,
+                    write: true,
                     create: false,
                     update: false,
-                    delete: false,
+                    delete: true,
                 },
             } as PrepareHandleResult;
             const oldResource = await database.collection(model.name).getById(req.params.id);
@@ -39,7 +41,7 @@ export default (model: Model, database: Database) : ModelHandler  => {
             return result;
         },
         handle: async (req: Request, res: Response, next: NextFunction) => {
-            const result = await database.collection(model.name).getById(req.params.id);
+            const result = await database.collection(model.name).delete(req.params.id);
             if(result) {
                 res.send(result);
             }

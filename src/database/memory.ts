@@ -1,9 +1,12 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongodb from './mongodb';
-import { Database, Model } from '../definitions';
+import { Database, DatabaseFactory, Model } from '../definitions';
 
-export default async (databaseConfiguration: any, models: Model[]) : Promise<Database> => {
-    const mongod = await MongoMemoryServer.create();
-    const uri = mongod.getUri();
-    return mongodb(uri, models);
+export default () : DatabaseFactory => {
+    return async(models: Model[]) : Promise<Database> => {
+        const mongod = await MongoMemoryServer.create();
+        const uri = mongod.getUri();
+        const database = mongodb(uri);
+        return await database(models);
+    }
 };

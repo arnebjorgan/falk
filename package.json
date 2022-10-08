@@ -19,10 +19,10 @@
   ],
   "author": "arne.bjorgan",
   "license": "MIT",
-  "homepage": "https://falkjs.com",
+  "homepage": "falkjs.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/arnebjorgan/falk"
+    "url": "github.com/arnebjorgan/falk"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
@@ -35,6 +35,7 @@
     "joi": "^17.4.2",
     "mongodb-memory-server": "^8.9.0",
     "mongoose": "^6.0.7",
-    "swagger-ui-express": "^4.1.6"
+    "swagger-ui-express": "^4.1.6",
+    "zod": "^3.19.1"
   }
 }

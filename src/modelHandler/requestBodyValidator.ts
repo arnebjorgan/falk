@@ -1,6 +1,8 @@
 import Joi from 'joi';
-import fieldTypes from '../fieldTypes';
+import fieldTypes from '../field';
 import { Field, Model } from '../definitions';
+
+//TODO
 
 export default (model: Model, options = { merge: false }) => {
     let validationObject : { [key: string] : any } = {};

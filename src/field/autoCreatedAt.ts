@@ -1,7 +1,9 @@
 import Joi from 'joi';
-import { FieldTypeHelper } from '../definitions';
+import { FieldType } from '../definitions';
 
-const helper : FieldTypeHelper = {
+//TODO
+
+const helper : FieldType = {
     parseFromQuery: (val : string) => {
         return new Date(val);
     },
@@ -9,6 +11,10 @@ const helper : FieldTypeHelper = {
     mongoDbType: Date,
     swaggerTypeString: 'string',
     swaggerFormatString: 'date-time',
+    swaggerReadonly: true,
+    autoField: {
+        getCreateValue() { return new Date() },
+    },
 }
 
 export default helper;

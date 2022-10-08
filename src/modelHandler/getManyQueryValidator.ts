@@ -1,6 +1,8 @@
 import Joi from 'joi';
-import fieldTypes from '../fieldTypes';
+import fieldTypes from '../field';
 import { DatabaseFilterOperator, Field, GetManyQueryOptions, Model } from '../definitions';
+
+//TODO
 
 export default (model: Model) => {
     let validationObject : { [key: string] : any } = {};

@@ -1,15 +1,12 @@
 import express from 'express'
 import Joi from 'joi';
 
-export type Field = {
+export interface Field {
     name: string,
-    type: FieldType,
-} & FieldConfiguration;
-
-export type FieldConfiguration = {
+    type: 'string'|'number'|'boolean'|'datetime'|'auto_created_at'|'auto_updated_at',
     required?: boolean,
     validator?: (val: unknown) => boolean,
-}
+};
 
 export type Model = {
     name: string,
@@ -31,8 +28,10 @@ export type Operation = {
     delete: boolean,
 }
 
-export type Database = {
-    collection(modelName: string) : DatabaseCollection,
+export interface DatabaseFactory { (models: Model[]) : Promise<Database> }
+
+export interface Database {
+    collection(modelName: Model) : DatabaseCollection,
     filter: {
         eq(fieldName: string, value: any) : DatabaseFilter,
         neq(fieldName: string, value: any) : DatabaseFilter,
@@ -92,6 +91,8 @@ export type GetManyQueryOptions = {
     _skip?: number,
 }
 
+//TODO clean up
+
 export type DatabaseGetManyOptions = {
     sorters?: DatabaseSorter[],
     limit?: number,
@@ -103,31 +104,23 @@ export type Resource = {
     data?: any,
 }
 
+//@internal
+export interface Endpoint {
+    method: HttpMethod,
+    path: string,
+    handler: RequestHandler,
+}
+
+//@internal
+export type HttpMethod = 'get'|'post'|'put'|'patch'|'delete'; 
+
 export type ModelRequest = {
     auth?: any,
     resource: Resource,
     baseRequest: express.Request,
 }
 
-export type AuthFunc = (req: Express.Request, accept: (userData?: any) => void, reject: () => void) => Promise<void> | void;
-
-export type ManualEndpointHandler = (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) => Promise<void> | void;
-
-export type App = {
-    database: {
-        memory() : void,
-        mongodb(connectionString: string) : void,
-    },
-    auth(authFunc: AuthFunc) : void,
-    middleware(requestHandler : express.RequestHandler) : void,
-    model(name: string, fields: {[key: string]: { type: FieldType, configuration: FieldConfiguration } }) : Model,
-    get(path : string, requestHandler : ManualEndpointHandler) : void,
-    post(path : string, requestHandler : ManualEndpointHandler) : void,
-    put(path : string, requestHandler : ManualEndpointHandler) : void,
-    patch(path : string, requestHandler : ManualEndpointHandler) : void,
-    delete(path : string, requestHandler : ManualEndpointHandler) : void,
-    startServer(port?: number) : Promise<void>,
-}
+export type AuthFunc = (req: Express.Request, database: Database, accept: (auth?: any) => void, reject: () => void) => Promise<void> | void;
 
 //@internal
 export type PrepareHandleResult = {
@@ -143,44 +136,15 @@ export type PrepareHandleResult = {
 }
 
 //@internal
-export type ModelHandler = {
-    prepareHandle(req: express.Request) : Promise<PrepareHandleResult>,
-    handle: (req: express.Request, res: express.Response, next: express.NextFunction, prepareHandleResult?: PrepareHandleResult) => void,
-}
-
-//@internal
-export type FieldType = 'string'|'number'|'boolean'|'datetime'|'auto_created_at'|'auto_updated_at';
-
-//@internal
-export type Middleware = (req: express.Request, res: express.Response, next: express.NextFunction) => void;
-
-//@internal
-export type DatabaseConfiguration = undefined | string;
-
-//@internal
-export enum DatabaseType {
-    MEMORY = 'memory',
-    MONGODB = 'mongodb',
+export interface RequestHandler {
+    (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) : Promise<void>|void;
 }
 
 //@internal
 export type RequestHandlerFactory = (model: Model, database: Database) => express.RequestHandler;
 
 //@internal
-export type ModelHandlerFactory = (model: Model, database: Database) => ModelHandler;
-
-//@internal
-export type ManualEndpoint = {
-    method: ManualEndpointHttpMethod,
-    path: string,
-    requestHandler: ManualEndpointHandler,
-}
-
-//@internal
-export type ManualEndpointHttpMethod = 'get'|'post'|'put'|'patch'|'delete';
-
-//@internal
-export type FieldTypeHelper = {
+export type FieldType = {
     parseFromQuery(val : unknown) : unknown,
     validator: Joi.Schema,
     mongoDbType: unknown,
