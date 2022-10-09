@@ -1,12 +1,11 @@
-import Joi from 'joi';
+import { z } from 'zod';
 import { FieldType } from '../definitions';
-//TODO
-const helper : FieldType = {
+
+const helper : FieldType<number> = {
     parseFromQuery: (val : string) => {
-        //@ts-ignore
-        return isNaN(val) ? val : parseFloat(val);
+        return parseFloat(val);
     },
-    validator: Joi.number(),
+    validator: z.number(),
     mongoDbType: Number,
     swaggerTypeString: 'number',
 }

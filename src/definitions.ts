@@ -1,20 +1,37 @@
 import express from 'express'
 import Joi from 'joi';
+import Zod from 'zod';
 
-export interface Field {
+export interface Model {
     name: string,
-    type: 'string'|'number'|'boolean'|'datetime'|'auto_created_at'|'auto_updated_at',
-    required?: boolean,
-    validator?: (val: unknown) => boolean,
-};
+    fields: {[key: string]: Field<Type> },
+    isExposed: boolean,
+    allowFunction?: AllowFunction,
+    expose(allowFunction: AllowFunction) : void,
+}
 
-export type Model = {
-    name: string,
-    fields: Field[],
-    isExposed?: boolean,
-    allow?: AllowFunction,
-    expose: (allowFunction: AllowFunction) => void
-};
+export type Type = string|number|boolean|Date;
+
+export interface Field<T> {
+    fieldType: FieldType<T>,
+    isRequired: boolean,
+    customValidator?: (val: T) => boolean,
+    required() : Field<T>,
+    validator(validator: (val: T) => boolean) : Field<T>,
+}
+
+export interface FieldType<T> {
+    parseFromQuery(val : string) : T,
+    validator: Zod.ZodTypeAny,
+    mongoDbType: unknown,
+    swaggerTypeString : string,
+    swaggerFormatString? : string,
+    swaggerReadonly?: boolean,
+    autoField?: {
+        getCreateValue?: () => T,
+        getUpdateValue?: () => T,
+    },
+}
 
 export type AllowFunction = (request: ModelRequest, resource: Resource|null, operation: Operation, database: Database) => Promise<boolean> | boolean;
 
@@ -142,17 +159,3 @@ export interface RequestHandler {
 
 //@internal
 export type RequestHandlerFactory = (model: Model, database: Database) => express.RequestHandler;
-
-//@internal
-export type FieldType = {
-    parseFromQuery(val : unknown) : unknown,
-    validator: Joi.Schema,
-    mongoDbType: unknown,
-    swaggerTypeString : string,
-    swaggerFormatString? : string,
-    swaggerReadonly?: boolean,
-    autoField?: {
-        getCreateValue?: () => any,
-        getUpdateValue?: () => any,
-    },
-}

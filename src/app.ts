@@ -6,9 +6,9 @@ import createMongodbDatabase from './database/mongodb';
 import createAuth from './auth';
 import createModel from './model';
 import createRequestHandler from './requestHandler';
-import modelHandler from './modelHandler';
+import createModelRequestHandler from './modelRequestHandler';
 import createDocs from './docs';
-import { AuthFunc, DatabaseFactory, Endpoint, Field, HttpMethod, Model, RequestHandler } from './definitions';
+import { AuthFunc, DatabaseFactory, Endpoint, Field, Type, HttpMethod, Model, RequestHandler } from './definitions';
 
 export default () => {
     let _databaseFactory : DatabaseFactory|undefined;
@@ -44,8 +44,9 @@ export default () => {
             z.function().parse(middleware);
             _middlewares.push(middleware);
         },
-        model(name: string, fields: {[key: string]: Field }) : Model {
-            //TODO validate here?
+        model(name: string, fields: {[key: string]: Field<Type> }) {
+            z.string().parse(name);
+            z.object({}).passthrough().parse(fields);
             if(_models.some(model => model.name === name)) throw new Error(`Model "${name}" is configured more than once`);
             const model = createModel(name, fields);
             _models.push(model);
@@ -85,12 +86,12 @@ export default () => {
             // Models
             _models.forEach(model => {
                 if(model.isExposed) {
-                    app.get(`/${model.name}/:id`, modelHandler.getById(model, database));
-                    app.get(`/${model.name}`, modelHandler.getMany(model, database));
-                    app.post(`/${model.name}`, modelHandler.post(model, database));
-                    app.put(`/${model.name}/:id`, modelHandler.put(model, database));
-                    app.patch(`/${model.name}/:id`, modelHandler.patch(model, database));
-                    app.delete(`/${model.name}/:id`, modelHandler.del(model, database));
+                    app.get(`/${model.name}/:id`, createModelRequestHandler.getById(model, database));
+                    app.get(`/${model.name}`, createModelRequestHandler.getMany(model, database));
+                    app.post(`/${model.name}`, createModelRequestHandler.post(model, database));
+                    app.put(`/${model.name}/:id`, createModelRequestHandler.put(model, database));
+                    app.patch(`/${model.name}/:id`, createModelRequestHandler.patch(model, database));
+                    app.delete(`/${model.name}/:id`, createModelRequestHandler.del(model, database));
                     console.info(`🌎 ${model.name} - exposed on API`);
                 }
                 else {

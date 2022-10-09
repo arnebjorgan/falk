@@ -1,11 +1,11 @@
-import Joi from 'joi';
+import { z } from 'zod';
 import { FieldType } from '../definitions';
-//TODO
-const helper : FieldType = {
+
+const helper : FieldType<Date> = {
     parseFromQuery: (val : string) => {
         return new Date(val);
     },
-    validator: Joi.date().iso(),
+    validator: z.date(),
     mongoDbType: Date,
     swaggerTypeString: 'string',
     swaggerFormatString: 'date-time',
