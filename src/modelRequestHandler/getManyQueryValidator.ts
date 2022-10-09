@@ -1,8 +1,9 @@
 import Joi from 'joi';
+import { z } from 'zod';
 import fieldTypes from '../field';
 import { DatabaseFilterOperator, Field, GetManyQueryOptions, Model } from '../definitions';
 
-//TODO
+//TODO current
 
 export default (model: Model) => {
     let validationObject : { [key: string] : any } = {};

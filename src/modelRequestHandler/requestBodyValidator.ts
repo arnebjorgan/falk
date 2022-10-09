@@ -1,34 +1,27 @@
-import Joi from 'joi';
-import fieldTypes from '../field';
-import { Field, Model } from '../definitions';
-
-//TODO
+import { z } from 'zod';
+import { Model } from '../definitions';
 
 export default (model: Model, options = { merge: false }) => {
-    let validationObject : { [key: string] : any } = {};
-    model.fields.filter(field => !fieldTypes[field.type].autoField).forEach((field: Field) => {
-        let fieldValidator = fieldTypes[field.type].validator;
-        if(field.required && !options.merge) {
-            fieldValidator = fieldValidator.required();
-        }
-        if(field.validator) {
-            const customValidator = (val: unknown, helper: any) => {
-                const customValidationResult = field.validator?.(val);
-                if(customValidationResult === true) {
-                    return val;
-                }
-                else {
-                    //This error is not returned when used in Joi.alternatives(). Should be possible to have custom errors, also provided by end developer.
-                    throw new Error(`Invalid value for field ${field.name}`);
-                }
+    
+    let fieldObjectSchema : { [key:string]: Zod.ZodTypeAny } = {};
+    for(const [key, value] of Object.entries(model.fields)) {
+        if(!value.fieldType.autoField) {
+            let validator = value.fieldType.validator;
+            if(!value.isRequired || options.merge) {
+                validator = validator.optional();
             }
-            fieldValidator = Joi.alternatives().try(fieldValidator, Joi.custom(customValidator)).match('all');
+            if(value.customValidator) {
+                validator = validator.refine(value.customValidator, (val) => ({
+                    message: `Invalid value for field ${key}`,
+                }));
+            }
+            fieldObjectSchema[key] = validator;
         }
-        validationObject[field.name] = fieldValidator;
-    });
-    const validationSchema = Joi.object(validationObject);
+    }
+    const modelSchema = z.object(fieldObjectSchema);
+
     return (requestBody: Object) : string | null =>  {
-        const { error } = validationSchema.validate(requestBody, { abortEarly: false });
-        return error ? error.details.map((detail: { message: any; }) => detail.message).join(', ') : null;
+        const result = modelSchema.safeParse(requestBody);
+        return result.success ? null : result.error.issues.join(', ');
     };
 };

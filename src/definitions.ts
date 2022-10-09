@@ -1,5 +1,6 @@
 import express from 'express'
 import Joi from 'joi';
+import { SchemaDefinitionProperty } from 'mongoose';
 import Zod from 'zod';
 
 export interface Model {
@@ -23,7 +24,7 @@ export interface Field<T> {
 export interface FieldType<T> {
     parseFromQuery(val : string) : T,
     validator: Zod.ZodTypeAny,
-    mongoDbType: unknown,
+    mongoDbType: SchemaDefinitionProperty,
     swaggerTypeString : string,
     swaggerFormatString? : string,
     swaggerReadonly?: boolean,
@@ -31,6 +32,11 @@ export interface FieldType<T> {
         getCreateValue?: () => T,
         getUpdateValue?: () => T,
     },
+}
+
+export interface ModelHandler {
+    prepareHandle(req: express.Request) : Promise<PrepareHandleResult>,
+    handle(req: express.Request, res: express.Response, next: express.NextFunction, prepareResult?: PrepareHandleResult) : Promise<void>,
 }
 
 export type AllowFunction = (request: ModelRequest, resource: Resource|null, operation: Operation, database: Database) => Promise<boolean> | boolean;
@@ -47,8 +53,18 @@ export type Operation = {
 
 export interface DatabaseFactory { (models: Model[]) : Promise<Database> }
 
+/*
+const users = await db.collection('users').getMany([db.filter.eq('username', req.body.username), db.filter.eq('password', req.body.password)]);
+const users = await db.model.users.getMany([db.model.users.username.eq(req.body.username), db.model.users.password.eq(req.body.password)]);
+const users = await db.model.users.getMany({
+    username: db.filter.eq(req.body.username),
+    password: db.filter.eq(req.body.password)
+});
+db.model.cars.getMany()
+*/
+
 export interface Database {
-    collection(modelName: Model) : DatabaseCollection,
+    collection(modelName: string) : DatabaseCollection,
     filter: {
         eq(fieldName: string, value: any) : DatabaseFilter,
         neq(fieldName: string, value: any) : DatabaseFilter,
@@ -156,6 +172,3 @@ export type PrepareHandleResult = {
 export interface RequestHandler {
     (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) : Promise<void>|void;
 }
-
-//@internal
-export type RequestHandlerFactory = (model: Model, database: Database) => express.RequestHandler;

@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Database, Model, ModelHandler, PrepareHandleResult } from '../definitions';
 
-//TODO
-
 export default (model: Model, database: Database) : ModelHandler  => {
     
     const getNotFoundMessage = (id: string) => {

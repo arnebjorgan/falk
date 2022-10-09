@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Database, Model, ModelHandler, PrepareHandleResult } from '../definitions';
-import createRequestBodyValidator from './createRequestBodyValidator';
-//TODO
+import createRequestBodyValidator from './requestBodyValidator';
 
 export default (model: Model, database: Database) : ModelHandler  => {
     const bodyValidator = createRequestBodyValidator(model, { merge: true });

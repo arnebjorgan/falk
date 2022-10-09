@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import { Database, Model, ModelHandlerFactory, RequestHandlerFactory } from '../definitions';
+import { Database, Model, ModelHandler } from '../definitions';
 import getById from './getById';
 import getMany from './getMany';
 import post from './post';
@@ -7,21 +7,19 @@ import put from './put';
 import patch from './patch';
 import del from './del';
 
-//TODO
-
-const requestHandler = (handler : ModelHandlerFactory) : RequestHandlerFactory => {
+const requestHandler = (handler : (model: Model, database: Database) => ModelHandler) => {
     return (model: Model, database: Database) : RequestHandler => {
         const modelHandler = handler(model, database);
         return async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
             try {
                 let prepareResult;
-                if(model.allow) {
+                if(model.allowFunction) {
                     prepareResult = await modelHandler.prepareHandle(req);
                     if(prepareResult.error) {
                         res.status(prepareResult.errorStatus ? prepareResult.errorStatus : 500).send(prepareResult.error);
                         return;
                     }
-                    const operationIsAllowed = await model.allow({
+                    const operationIsAllowed = await model.allowFunction({
                         auth: res.locals._falk_auth,
                         resource: prepareResult.newResource,
                         baseRequest: req,

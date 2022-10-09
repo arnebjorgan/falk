@@ -1,18 +1,15 @@
-import mongoose from 'mongoose';
-import fieldTypes from '../field';
-import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseSortDirection, DatabaseGetManyOptions, DatabaseSorter, Field, Model, DatabaseFactory } from '../definitions';
-
-//TODO fix
+import mongoose, { SchemaDefinitionProperty } from 'mongoose';
+import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseSortDirection, DatabaseGetManyOptions, DatabaseSorter, Model, DatabaseFactory } from '../definitions';
 
 export default (connectionString: string) : DatabaseFactory => {
     return async(modelInput: Model[]) : Promise<Database> => {
         await mongoose.connect(connectionString);
         let models : { [key: string]: { userModel: Model, dbModel: mongoose.Model<any> }} = {};
         modelInput.forEach((model: Model) => {
-            const schemaObject = model.fields.reduce((acc: any, field: Field) => {
-                acc[field.name] = fieldTypes[field.type].mongoDbType;
-                return acc;
-            }, {});
+            let schemaObject : { [key:string]: SchemaDefinitionProperty } = {};
+            for (const [key, value] of Object.entries(model.fields)) {
+                schemaObject[key] = value.fieldType.mongoDbType;
+            }
             const schema = new mongoose.Schema(schemaObject, { versionKey: false });
             models[model.name] = {
                 userModel: model,
@@ -88,10 +85,10 @@ export default (connectionString: string) : DatabaseFactory => {
                         return query;
                     },
                     create(data: any) {
-                        models[modelName].userModel.fields.forEach(field => {
-                            if(fieldTypes[field.type].autoField?.getCreateValue) data[field.name] = fieldTypes[field.type].autoField?.getCreateValue?.();
-                            if(fieldTypes[field.type].autoField?.getUpdateValue) data[field.name] = fieldTypes[field.type].autoField?.getUpdateValue?.();
-                        });
+                        for (const [key, value] of Object.entries(models[modelName].userModel.fields)) {
+                            if(value.fieldType.autoField?.getCreateValue) data[key] = value.fieldType.autoField?.getCreateValue?.();
+                            if(value.fieldType.autoField?.getUpdateValue) data[key] = value.fieldType.autoField?.getUpdateValue?.();
+                        }
                         return models[modelName].dbModel.create(data);
                     },
                     update(id: string, data: any) {
@@ -99,9 +96,9 @@ export default (connectionString: string) : DatabaseFactory => {
                         if(!isValidId) {
                             return null;
                         }
-                        models[modelName].userModel.fields.forEach(field => {
-                            if(fieldTypes[field.type].autoField?.getUpdateValue) data[field.name] = fieldTypes[field.type].autoField?.getUpdateValue?.();
-                        });
+                        for (const [key, value] of Object.entries(models[modelName].userModel.fields)) {
+                            if(value.fieldType.autoField?.getUpdateValue) data[key] = value.fieldType.autoField?.getUpdateValue?.();
+                        };
                         return models[modelName].dbModel.findByIdAndUpdate(id, data, { new: true });
                     },
                     put(id: string, data: any) {
@@ -109,10 +106,10 @@ export default (connectionString: string) : DatabaseFactory => {
                         if(!isValidId) {
                             return null;
                         }
-                        models[modelName].userModel.fields.forEach(field => {
-                            if(fieldTypes[field.type].autoField?.getCreateValue) data[field.name] = fieldTypes[field.type].autoField?.getCreateValue?.();
-                            if(fieldTypes[field.type].autoField?.getUpdateValue) data[field.name] = fieldTypes[field.type].autoField?.getUpdateValue?.();
-                        });
+                        for (const [key, value] of Object.entries(models[modelName].userModel.fields)) {
+                            if(value.fieldType.autoField?.getCreateValue) data[key] = value.fieldType.autoField?.getCreateValue?.();
+                            if(value.fieldType.autoField?.getUpdateValue) data[key] = value.fieldType.autoField?.getUpdateValue?.();
+                        }
                         return models[modelName].dbModel.findByIdAndUpdate(id, { ...data, _id: id }, { new: true, upsert: true, overwrite: true });
                     },
                     delete(id: string) {
