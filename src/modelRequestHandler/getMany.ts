@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import fieldTypes from '../field';
+import { Request, Response, NextFunction } from 'express';
 import { Database, DatabaseFilter, DatabaseFilterOperator, DatabaseGetManyOptions, DatabaseSortDirection, DatabaseSorter, Model, ModelHandler, PrepareHandleResult } from '../definitions';
 import createGetManyQueryValidator from './getManyQueryValidator';
 const queryFilterOperatorMap = [
@@ -18,16 +17,13 @@ const querySorterDirectionMap = [
 ];
 const specialQueryKeys = ['_sort', '_limit', '_skip'];
 
-//TODO
-
 export default (model: Model, database: Database) : ModelHandler  => {
 
     const getGetManyOptions = (req: Request) => {
         const parseFilterValue = (key: string, value : any, operator: DatabaseFilterOperator) : any => {
             const isArrayOperator = [DatabaseFilterOperator.IN, DatabaseFilterOperator.NOTIN].includes(operator);
-            const field = model.fields.find(field => field.name === key);
-            if(field) {
-                const parser = fieldTypes[field.type].parseFromQuery;
+            if(model.fields[key]) {
+                const parser = model.fields[key].fieldType.parseFromQuery;
                 return isArrayOperator ? value.split(',').map(parser) : parser(value);
             }
             return null;
@@ -60,8 +56,8 @@ export default (model: Model, database: Database) : ModelHandler  => {
             });
         }
 
-        const limit = req.query._limit ? parseFloat(req.query._limit as string) : undefined;
-        const skip = req.query._skip ? parseFloat(req.query._skip as string) : undefined;
+        const limit = req.query._limit ? parseInt(req.query._limit as string) : undefined;
+        const skip = req.query._skip ? parseInt(req.query._skip as string) : undefined;
 
         return {
             filters,
@@ -81,7 +77,7 @@ export default (model: Model, database: Database) : ModelHandler  => {
                 },
                 oldResource: {
                     id: undefined,
-                    data: undefined,//TODO filters (==)
+                    data: undefined,
                 },
                 operation: {
                     read: true,

@@ -4,7 +4,7 @@ dotenv.config();
 
 const databaseType = process.argv[2];
 
-const app = falk.default();
+const app = falk.app();
 
 if(databaseType === 'memory') {
     app.database.memory();
@@ -14,25 +14,25 @@ else if(databaseType === 'mongodb') {
 }
 
 app.model('cars', {
-    brand: falk.fieldType.string({ required: true }),
-    horsePower: falk.fieldType.number(),
-    electric: falk.fieldType.boolean(),
-    registered_date: falk.fieldType.datetime(),
-    bodywork: falk.fieldType.string({ validator: val => ['suv', 'sedan', 'station_wagon'].includes(val) }),
+    brand: falk.field.string().required(),
+    horsePower: falk.field.number(),
+    electric: falk.field.boolean(),
+    registered_date: falk.field.datetime(),
+    bodywork: falk.field.string().validator(val => ['suv', 'sedan', 'station_wagon'].includes(val)),
 }).expose(() => true);
 
 app.model('brands', {
-    name: falk.fieldType.string(),
-    created_at: falk.fieldType.auto.createdAt(),
-    updated_at: falk.fieldType.auto.updatedAt(),
+    name: falk.field.string(),
+    created_at: falk.field.auto.createdAt(),
+    updated_at: falk.field.auto.updatedAt(),
 }).expose(() => true);
 
 app.model('not-exposed', {
-    foo: falk.fieldType.string(),
+    foo: falk.field.string(),
 });
 
 app.model('allow-bar-and-reads', {
-    foo: falk.fieldType.string(),
+    foo: falk.field.string(),
 }).expose((request, resource, operation, db) => {
     if(operation.write) return request.resource.data.foo === 'bar';
     else if(operation.read) return true;
@@ -59,4 +59,4 @@ app.delete('/manual-endpoint', (req, res, next, db) => {
     res.send('ok');
 });
 
-app.startServer();
+app.start();

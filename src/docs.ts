@@ -1,7 +1,4 @@
-import fieldTypes from './field';
 import { Endpoint, Field, Model } from './definitions';
-
-//TODO fix
 
 export default (allModels: Model[], endpoints: Endpoint[]) : Object => {
     const models = allModels.filter(model => model.isExposed);
@@ -12,11 +9,11 @@ export default (allModels: Model[], endpoints: Endpoint[]) : Object => {
         definitions: models.reduce((acc: any, model: Model) => {
             acc[model.name] = {
                 type: 'object',
-                properties: model.fields.reduce((acc: any, field: Field) => {
-                    acc[field.name] = {
-                        type: fieldTypes[field.type].swaggerTypeString,
-                        format: fieldTypes[field.type].swaggerFormatString,
-                        readOnly: fieldTypes[field.type].swaggerReadonly,
+                properties: Object.entries(model.fields).reduce((acc: any, current: [string, Field<any>]) => { //TODO
+                    acc[current[0]] = {
+                        type: current[1].fieldType.swaggerTypeString,
+                        format: current[1].fieldType.swaggerFormatString,
+                        readOnly: current[1].fieldType.swaggerReadonly,
                     };
                     return acc;
                 }, {}),

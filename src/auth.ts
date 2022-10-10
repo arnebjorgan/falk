@@ -17,7 +17,7 @@ export default (authFunc: AuthFunc, database: Database) => {
                 },
             );
         } catch(e) {
-            res.status(401).send('User is not authorized');
+            res.status(500).send('An unexpected error occured');
         }
     }
 }

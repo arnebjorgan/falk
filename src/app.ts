@@ -1,5 +1,5 @@
 import express from 'express';
-import swaggerUI from 'swagger-ui-express';
+//import swaggerUI from 'swagger-ui-express';
 import { z } from 'zod';
 import createMemoryDatabase from './database/memory';
 import createMongodbDatabase from './database/mongodb';
@@ -7,7 +7,7 @@ import createAuth from './auth';
 import createModel from './model';
 import createRequestHandler from './requestHandler';
 import createModelRequestHandler from './modelRequestHandler';
-import createDocs from './docs';
+//import createDocs from './docs';
 import { AuthFunc, DatabaseFactory, Endpoint, Field, Type, HttpMethod, Model, RequestHandler } from './definitions';
 
 export default () => {
@@ -71,11 +71,11 @@ export default () => {
 
             // Auth
             if(_authFunc) {
-                console.info(`Auth check enabled 🔒`)
+                console.info(`🔒 Auth check enabled`)
                 app.use(createAuth(_authFunc, database));
             }
             else {
-                console.info(`No auth check, all endpoints are public ⚠️`)
+                console.info(`⚠️ No auth check, all endpoints are public`)
             }
 
             // Middleware
@@ -107,11 +107,12 @@ export default () => {
             });
 
             // Docs
-            app.get('/', swaggerUI.serve, swaggerUI.setup(createDocs(_models.filter(model => model.isExposed), _endpoints)));
+            //app.get('/', swaggerUI.serve, swaggerUI.setup(createDocs(_models.filter(model => model.isExposed), _endpoints)));
+            //TODO
 
             // Startup
             app.listen(8080, () => {
-                console.info('Listening at port 8080 ⚡');
+                console.info('⚡ Listening at port 8080');
             });
 
         },

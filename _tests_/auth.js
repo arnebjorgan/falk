@@ -1,21 +1,21 @@
 const falk = require('../dist/index');
-const app = falk.default();
+const app = falk.app();
 
-app.auth((req, acceptUser, rejectUser) => {
+app.auth((req, database, accept, reject) => {
     if(req.body.userId) {
-        acceptUser({
+        accept({
             userId: req.body.userId,
         });
     }
     else {
-        rejectUser();
+        reject();
     }
 });
 
 app.model('cars', {
-    userId: falk.fieldType.string(),
+    userId: falk.field.string(),
 }).expose((request, resource, operation, db) => {
-    return !!request.auth?.userId;
+    return request.auth?.userId === 'allowedUserId';
 });
 
-app.startServer();
+app.start();

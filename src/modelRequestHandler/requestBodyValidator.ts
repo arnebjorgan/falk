@@ -22,6 +22,6 @@ export default (model: Model, options = { merge: false }) => {
 
     return (requestBody: Object) : string | null =>  {
         const result = modelSchema.safeParse(requestBody);
-        return result.success ? null : result.error.issues.join(', ');
+        return result.success ? null : result.error.issues.map(issue => issue.message).join(', ');
     };
 };

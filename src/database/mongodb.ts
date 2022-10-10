@@ -122,4 +122,5 @@ export default (connectionString: string) : DatabaseFactory => {
                 }
             },
         };
+    }
 };
