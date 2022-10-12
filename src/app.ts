@@ -1,6 +1,6 @@
 import express from 'express';
 //import swaggerUI from 'swagger-ui-express';
-import { z } from 'zod';
+import Joi from 'joi';
 import createMemoryDatabase from './database/memory';
 import createMongodbDatabase from './database/mongodb';
 import createAuth from './auth';
@@ -18,8 +18,8 @@ export default () => {
     const _endpoints : Endpoint[] = [];
 
     const createEndpoint = (method: HttpMethod, path: string, handler: RequestHandler) => {
-        z.string().parse(path);
-        z.function().parse(handler);
+        Joi.assert(path, Joi.string().required());
+        Joi.assert(handler, Joi.function().required());
         _endpoints.push({ method, path, handler });
     };
 
@@ -31,22 +31,22 @@ export default () => {
             },
             mongodb(connectionString: string) {
                 if(_databaseFactory) throw new Error('Database is configured more than once');
-                z.string().parse(connectionString);
+                Joi.assert(connectionString, Joi.string().required());
                 _databaseFactory = createMongodbDatabase(connectionString);
             },
         },
         auth(authFunc: AuthFunc) : void {
             if(_authFunc) throw new Error('Auth is configured more than once');
-            z.function().parse(authFunc);
+            Joi.assert(authFunc, Joi.function().required());
             _authFunc = authFunc;
         },
         middleware(middleware : express.RequestHandler) : void {
-            z.function().parse(middleware);
+            Joi.assert(middleware, Joi.function().required());
             _middlewares.push(middleware);
         },
         model(name: string, fields: {[key: string]: Field<Type> }) {
-            z.string().parse(name);
-            z.object({}).passthrough().parse(fields);
+            Joi.assert(name, Joi.string().required());
+            Joi.assert(fields, Joi.object().required());
             if(_models.some(model => model.name === name)) throw new Error(`Model "${name}" is configured more than once`);
             const model = createModel(name, fields);
             _models.push(model);

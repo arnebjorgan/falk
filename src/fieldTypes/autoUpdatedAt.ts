@@ -1,11 +1,17 @@
-import { z } from 'zod';
+import Joi from 'joi';
 import { FieldType } from '../definitions';
 
 const helper : FieldType<Date> = {
+    typeString: 'date',
     parseFromQuery: (val : string) => {
-        return new Date(val);
+        const parsed = new Date(val);
+        try {
+            return parsed.toISOString() === val ? parsed : val;
+        } catch(e) {
+            return val;
+        }
     },
-    validator: z.date(),
+    validator: Joi.date(),
     mongoDbType: Date,
     swaggerTypeString: 'string',
     swaggerFormatString: 'date-time',

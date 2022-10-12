@@ -1,6 +1,6 @@
 import express from 'express'
+import Joi from 'joi';
 import { SchemaDefinitionProperty } from 'mongoose';
-import Zod from 'zod';
 
 export interface Model {
     name: string,
@@ -15,14 +15,15 @@ export type Type = string|number|boolean|Date;
 export interface Field<T> {
     fieldType: FieldType<T>,
     isRequired: boolean,
-    customValidator?: (val: T) => boolean,
+    customValidator?: (val: unknown) => boolean, //TODO use T
     required() : Field<T>,
-    validator(validator: (val: T) => boolean) : Field<T>,
+    validator(validator: (val: unknown) => boolean) : Field<T>, //TODO use T
 }
 
 export interface FieldType<T> {
-    parseFromQuery(val : string) : T,
-    validator: Zod.ZodTypeAny,
+    typeString: string,
+    parseFromQuery(val : string) : T|string,
+    validator: Joi.Schema,
     mongoDbType: SchemaDefinitionProperty,
     swaggerTypeString : string,
     swaggerFormatString? : string,

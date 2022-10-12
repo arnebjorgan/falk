@@ -1,25 +1,18 @@
-import { z } from 'zod';
+import Joi from 'joi';
 import { FieldType } from '../definitions';
 
 const helper : FieldType<boolean> = {
-    parseFromQuery: (val : string|boolean) => {
+    typeString: 'boolean',
+    parseFromQuery: (val : string) => {
         if(val === 'true' || val === '1') {
             return true;
         }
         else if(val === 'false' || val === '0') {
             return false;
         }
-        else if(val === true) {
-            return true;
-        }
-        else if(val === false) {
-            return false;
-        }
-        else {
-            return false;
-        }
+        else return val;
     },
-    validator: z.boolean(),
+    validator: Joi.boolean(),
     mongoDbType: Boolean,
     swaggerTypeString: 'boolean',
 }

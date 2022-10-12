@@ -56,8 +56,8 @@ export default (model: Model, database: Database) : ModelHandler  => {
             });
         }
 
-        const limit = req.query._limit ? parseInt(req.query._limit as string) : undefined;
-        const skip = req.query._skip ? parseInt(req.query._skip as string) : undefined;
+        const limit = req.query._limit ? parseFloat(req.query._limit as string) : undefined;
+        const skip = req.query._skip ? parseFloat(req.query._skip as string) : undefined;
 
         return {
             filters,

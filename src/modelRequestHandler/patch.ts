@@ -3,11 +3,12 @@ import { Database, Model, ModelHandler, PrepareHandleResult } from '../definitio
 import createRequestBodyValidator from './requestBodyValidator';
 
 export default (model: Model, database: Database) : ModelHandler  => {
-    const bodyValidator = createRequestBodyValidator(model, { merge: true });
 
     const getNotFoundMessage = (id: string) => {
         return `Could not find ${model.name} with id ${id}`;
     }
+
+    const requestBodyValidator = createRequestBodyValidator(model, { merge: true });
 
     return {
         prepareHandle: async(req: Request) => {
@@ -28,7 +29,7 @@ export default (model: Model, database: Database) : ModelHandler  => {
                 },
             } as PrepareHandleResult;
             
-            const bodyErrors = bodyValidator(req.body);
+            const bodyErrors = requestBodyValidator(req.body);
             if(bodyErrors) {
                 result.errorStatus = 400;
                 result.error = bodyErrors;

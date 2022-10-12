@@ -3,7 +3,7 @@ import { Database, Model, ModelHandler, PrepareHandleResult } from '../definitio
 import createRequestBodyValidator from './requestBodyValidator';
 
 export default (model: Model, database: Database) : ModelHandler  => {
-    const bodyValidator = createRequestBodyValidator(model);
+    const requestBodyValidator = createRequestBodyValidator(model);
     return {
         prepareHandle: async(req: Request) => {
             const oldResource = await database.collection(model.name).getById(req.params.id);
@@ -23,7 +23,7 @@ export default (model: Model, database: Database) : ModelHandler  => {
                     delete: false,
                 },
             } as PrepareHandleResult;
-            const bodyErrors = bodyValidator(req.body);
+            const bodyErrors = requestBodyValidator(req.body);
             if(bodyErrors) {
                 result.errorStatus = 400;
                 result.error = bodyErrors;

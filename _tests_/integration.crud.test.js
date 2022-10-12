@@ -791,11 +791,11 @@ test('getMany - invalid boolean in filter', async () => {
 
 test('getMany - invalid boolean nin filter', async () => {
     try {
-        await server.get('/cars?electric|nin=0,1,false,bar');
+        await server.get('/cars?electric|nin=true,foo,false,bar');
         fail('It should fail when using invalid boolean filter');
     } catch(e) {
         expect(e.response.status).toBe(400);
-        expect(e.response.data).toBe(`electric filter must be a boolean, was 0, electric filter must be a boolean, was 1, electric filter must be a boolean, was bar`);
+        expect(e.response.data).toBe(`electric filter must be a boolean, was foo, electric filter must be a boolean, was bar`);
     }
 });
 

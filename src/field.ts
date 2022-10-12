@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { Field, FieldType } from './definitions';
 import string from './fieldTypes/string';
 import number from './fieldTypes/number';
@@ -6,6 +5,7 @@ import boolean from './fieldTypes/boolean';
 import datetime from './fieldTypes/datetime';
 import autoCreatedAt from './fieldTypes/autoCreatedAt';
 import autoUpdatedAt from './fieldTypes/autoUpdatedAt';
+import Joi from 'joi';
 
 const createField = <T>(fieldType: FieldType<T>) => {
     return () : Field<T> => {
@@ -16,8 +16,8 @@ const createField = <T>(fieldType: FieldType<T>) => {
                 this.isRequired = true;
                 return this;
             },
-            validator(validator: (val: T) => boolean) {
-                z.function().parse(validator);
+            validator(validator: (val: unknown) => boolean) { //TODO use T
+                Joi.assert(validator, Joi.function().required());
                 this.customValidator = validator;
                 return this;
             },

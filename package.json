@@ -35,7 +35,6 @@
     "joi": "^17.4.2",
     "mongodb-memory-server": "^8.9.0",
     "mongoose": "^6.0.7",
-    "swagger-ui-express": "^4.1.6",
-    "zod": "^3.19.1"
+    "swagger-ui-express": "^4.1.6"
   }
 }
