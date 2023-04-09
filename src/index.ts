@@ -1,5 +1,5 @@
-import createApp from './app';
+import appCreator from './app';
 import createField from './field';
 
-export const app = createApp;
+export const createApp = appCreator;
 export const field = createField;

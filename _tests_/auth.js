@@ -1,5 +1,5 @@
 const falk = require('../dist/index');
-const app = falk.app();
+const app = falk.createApp();
 
 app.auth((req, database, accept, reject) => {
     if(req.body.userId) {

@@ -4,7 +4,7 @@ dotenv.config();
 
 const databaseType = process.argv[2];
 
-const app = falk.app();
+const app = falk.createApp();
 
 if(databaseType === 'memory') {
     app.database.memory();

@@ -4,17 +4,17 @@
   <p align="center">
     🤖 <a href="https://falkjs.com">https://falkjs.com</a> 🤖
     <br/>
-    <h3 align="center">Flexible and minimal REST API creation</h3>
+    <h3 align="center">Rapid model-based API development</h3>
   </p>
 </p>
 <br/>
 <div align="center">
-    <div>⚡ Minimal configuration</div>
-    <div>🔑 Built-in auth</div>
     <div>📦 Database agnostic</div>
-    <div>❔ Complex query support</div>
+    <div>🔒 Built-in auth</div>
     <div>📄 Automatic Open API docs</div>
-    <div>✔️ Request validation</div>
+    <div>⚡ Minimal configuration</div>
+    <div>✔️ High quality API</div>
+    <div>🔑 Typesafe development</div>
   </div>
 </div>
 <br/>
