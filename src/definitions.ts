@@ -155,7 +155,6 @@ export type ModelRequest = {
 
 export type AuthFunc = (req: Express.Request, database: Database, accept: (auth?: any) => void, reject: () => void) => Promise<void> | void;
 
-//@internal
 export type PrepareHandleResult = {
     errorStatus?: number,
     error?: string,
@@ -168,7 +167,6 @@ export type PrepareHandleResult = {
     getManySkip?: number,
 }
 
-//@internal
 export interface RequestHandler {
     (req: express.Request, res: express.Response, next: express.NextFunction, db: Database) : Promise<void>|void;
 }
