@@ -1,6 +1,6 @@
 {
   "name": "falk",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Rapid model-based API development",
   "main": "dist/index.js",
   "files": [

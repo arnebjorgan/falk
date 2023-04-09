@@ -57,7 +57,7 @@ export default () => {
         put: createEndpoint.bind(this, 'put',),
         patch: createEndpoint.bind(this, 'patch',),
         delete: createEndpoint.bind(this, 'delete',),
-        async start() : Promise<void> {
+        async start(port?: number) : Promise<void> {
 
             // Default database if not configured
             if(!_databaseFactory) _databaseFactory = createMemoryDatabase();
@@ -111,8 +111,9 @@ export default () => {
             //TODO
 
             // Startup
-            app.listen(8080, () => {
-                console.info('⚡ Listening at port 8080');
+            const finalPort = port || process.env.PORT || 8080;
+            app.listen(finalPort, () => {
+                console.info(`⚡ Listening at port ${finalPort}`);
             });
 
         },
