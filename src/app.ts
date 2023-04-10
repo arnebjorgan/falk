@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 //import swaggerUI from 'swagger-ui-express';
 import Joi from 'joi';
 import createMemoryDatabase from './database/memory';
@@ -11,6 +12,8 @@ import createModelRequestHandler from './modelRequestHandler';
 import { AuthFunc, DatabaseFactory, Endpoint, Field, Type, HttpMethod, Model, RequestHandler } from './definitions';
 
 export default () => {
+    let _enableCors : boolean = false;
+    let _corsOptions : any;
     let _databaseFactory : DatabaseFactory|undefined;
     let _authFunc : AuthFunc|undefined;
     const _middlewares : RequestHandler[] = [];
@@ -24,6 +27,10 @@ export default () => {
     };
 
     return {
+        cors(corsOptions?: any) : void {
+            _enableCors = true;
+            _corsOptions = corsOptions;
+        },
         database: {
             memory() {
                 if(_databaseFactory) throw new Error('Database is configured more than once');
@@ -67,6 +74,9 @@ export default () => {
 
             // Init/setup app
             const app = express();
+            if(_enableCors) {
+                app.use(cors(_corsOptions));
+            }
             app.use(express.json());
 
             // Auth

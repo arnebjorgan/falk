@@ -6,6 +6,8 @@ const databaseType = process.argv[2];
 
 const app = falk.createApp();
 
+app.cors();
+
 if(databaseType === 'memory') {
     app.database.memory();
 }
