@@ -1,8 +1,8 @@
 import express from 'express';
-import { AuthFunc } from './definitions';
+import { AppAuthFunc } from './definitions';
 import { Database } from './definitions';
 
-export default (authFunc: AuthFunc, database: Database) => {
+export default (authFunc: AppAuthFunc, database: Database) => {
     return async (req: express.Request, res: express.Response, next: express.NextFunction) : Promise<void> => {
         try {
             await authFunc(

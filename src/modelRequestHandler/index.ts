@@ -13,13 +13,13 @@ const requestHandler = (handler : (model: Model, database: Database) => ModelHan
         return async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
             try {
                 let prepareResult;
-                if(model.allowFunction) {
+                if(model.authFunction) {
                     prepareResult = await modelHandler.prepareHandle(req);
                     if(prepareResult.error) {
                         res.status(prepareResult.errorStatus ? prepareResult.errorStatus : 500).send(prepareResult.error);
                         return;
                     }
-                    const operationIsAllowed = await model.allowFunction({
+                    const operationIsAllowed = await model.authFunction({
                         auth: res.locals._falk_auth,
                         resource: prepareResult.newResource,
                         baseRequest: req,

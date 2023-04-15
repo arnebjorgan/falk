@@ -6,8 +6,8 @@ export interface Model {
     name: string,
     fields: {[key: string]: Field<Type> },
     isExposed: boolean,
-    allowFunction?: AllowFunction,
-    expose(allowFunction: AllowFunction) : void,
+    authFunction?: ModelAuthFunction,
+    expose(authFunction: ModelAuthFunction) : void,
 }
 
 export type Type = string|number|boolean|Date;
@@ -39,7 +39,7 @@ export interface ModelHandler {
     handle(req: express.Request, res: express.Response, next: express.NextFunction, prepareResult?: PrepareHandleResult) : Promise<void>,
 }
 
-export type AllowFunction = (request: ModelRequest, resource: Resource|null, operation: Operation, database: Database) => Promise<boolean> | boolean;
+export type ModelAuthFunction = (request: ModelRequest, resource: Resource|null, operation: Operation, database: Database) => Promise<boolean> | boolean;
 
 export type Operation = {
     read: boolean,
@@ -153,7 +153,7 @@ export type ModelRequest = {
     baseRequest: express.Request,
 }
 
-export type AuthFunc = (req: Express.Request, database: Database, accept: (auth?: any) => void, reject: () => void) => Promise<void> | void;
+export type AppAuthFunc = (req: Express.Request, database: Database, accept: (auth?: any) => void, reject: () => void) => Promise<void> | void;
 
 export type PrepareHandleResult = {
     errorStatus?: number,

@@ -1,13 +1,13 @@
-import { AllowFunction, Field, Type, Model } from './definitions';
+import { ModelAuthFunction, Field, Type, Model } from './definitions';
 
 export default (name: string, fields: {[key: string]: Field<Type> }) : Model => {
     return {
         name,
         fields,
         isExposed: false,
-        expose(allowFunction: AllowFunction) {
+        expose(authFunction: ModelAuthFunction) {
             this.isExposed = true;
-            this.allowFunction = allowFunction;
+            this.authFunction = authFunction;
         },
     };
 }

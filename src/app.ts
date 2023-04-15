@@ -9,13 +9,13 @@ import createModel from './model';
 import createRequestHandler from './requestHandler';
 import createModelRequestHandler from './modelRequestHandler';
 //import createDocs from './docs';
-import { AuthFunc, DatabaseFactory, Endpoint, Field, Type, HttpMethod, Model, RequestHandler } from './definitions';
+import { AppAuthFunc, DatabaseFactory, Endpoint, Field, Type, HttpMethod, Model, RequestHandler } from './definitions';
 
 export default () => {
     let _enableCors : boolean = false;
     let _corsOptions : any;
     let _databaseFactory : DatabaseFactory|undefined;
-    let _authFunc : AuthFunc|undefined;
+    let _authFunc : AppAuthFunc|undefined;
     const _middlewares : RequestHandler[] = [];
     const _models : Model[] = [];
     const _endpoints : Endpoint[] = [];
@@ -42,7 +42,7 @@ export default () => {
                 _databaseFactory = createMongodbDatabase(connectionString);
             },
         },
-        auth(authFunc: AuthFunc) : void {
+        auth(authFunc: AppAuthFunc) : void {
             if(_authFunc) throw new Error('Auth is configured more than once');
             Joi.assert(authFunc, Joi.function().required());
             _authFunc = authFunc;
