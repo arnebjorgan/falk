@@ -13,11 +13,9 @@ export default (model: Model, database: Database) : ModelHandler  => {
     return {
         prepareHandle: async(req: Request) => {
             const result = {
-                newResource: {
-                    id: req.params.id,
-                    data: null,
-                },
-                oldResource: null,
+                id: req.params.id,
+                data: null,
+                oldData: null,
                 operation: {
                     read: false,
                     get: false,
@@ -35,20 +33,17 @@ export default (model: Model, database: Database) : ModelHandler  => {
                 result.error = bodyErrors;
             }
             else {
-                const oldResource = await database.collection(model.name).getById(req.params.id);
-                if(!oldResource) {
+                const oldData = await database.collection(model.name).getById(req.params.id);
+                if(!oldData) {
                     result.errorStatus = 404;
                     result.error = getNotFoundMessage(req.params.id);
                 }
                 else {
-                    result.newResource.data = {
-                        ...oldResource,
+                    result.data = {
+                        ...oldData,
                         ...req.body,
                     };
-                    result.oldResource = {
-                        id: req.params.id,
-                        data: oldResource,
-                    };
+                    result.oldData = oldData;
                 }
             }
             return result;

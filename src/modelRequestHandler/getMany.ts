@@ -71,14 +71,9 @@ export default (model: Model, database: Database) : ModelHandler  => {
     return {
         prepareHandle: async(req: Request) => {
             const result = {
-                newResource: {
-                    id: undefined,
-                    data: undefined,
-                },
-                oldResource: {
-                    id: undefined,
-                    data: undefined,
-                },
+                id: undefined,
+                data: undefined,
+                oldData: undefined,
                 operation: {
                     read: true,
                     get: false,
@@ -105,7 +100,7 @@ export default (model: Model, database: Database) : ModelHandler  => {
             }
             else {
                 //TODO Github issue #51: only exposing equal filters for now, all filters need to be exposed later but it would require a special data structure, decide on structure later
-                result.oldResource = {
+                result.oldData = {
                     data: getManyOptions.filters.filter(filter => filter.operator === DatabaseFilterOperator.EQUAL).reduce((acc: { [key: string]: any }, current) => {
                         acc[current.key] = current.value;
                         return acc;

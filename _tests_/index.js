@@ -35,9 +35,9 @@ app.model('not-exposed', {
 
 app.model('allow-bar-and-reads', {
     foo: falk.field.string(),
-}).expose((request, resource, operation, db) => {
-    if(operation.write) return request.resource.data.foo === 'bar';
-    else if(operation.read) return true;
+}).expose((context, db) => {
+    if(context.operation.write) return context.data.foo === 'bar';
+    else if(context.operation.read) return true;
     else return false;
 });
 

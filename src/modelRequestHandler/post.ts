@@ -7,11 +7,9 @@ export default (model: Model, database: Database) : ModelHandler  => {
     return {
         prepareHandle: async(req: Request) => {
             const result = {
-                newResource: {
-                    id: req.params.id,
-                    data: req.body,
-                },
-                oldResource: null,
+                id: req.params.id,
+                data: req.body,
+                oldData: null,
                 operation: {
                     read: false,
                     get: false,

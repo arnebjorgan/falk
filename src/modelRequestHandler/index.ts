@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import { Database, Model, ModelHandler } from '../definitions';
+import { Database, Model, ModelHandler, ModelRequestContext } from '../definitions';
 import getById from './getById';
 import getMany from './getMany';
 import post from './post';
@@ -19,11 +19,15 @@ const requestHandler = (handler : (model: Model, database: Database) => ModelHan
                         res.status(prepareResult.errorStatus ? prepareResult.errorStatus : 500).send(prepareResult.error);
                         return;
                     }
-                    const operationIsAllowed = await model.authFunction({
+                    const context : ModelRequestContext = {
                         auth: res.locals._falk_auth,
-                        resource: prepareResult.newResource,
-                        baseRequest: req,
-                    }, prepareResult.oldResource, prepareResult.operation, database);
+                        id: prepareResult.id,
+                        data: prepareResult.data,
+                        oldData: prepareResult.oldData,
+                        operation: prepareResult.operation,
+                        expressRequest: req,
+                    };
+                    const operationIsAllowed = await model.authFunction(context, database);
                     if(!operationIsAllowed) {
                         res.status(403).send('Operation forbidden');
                         return;

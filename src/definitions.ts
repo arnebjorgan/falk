@@ -39,7 +39,7 @@ export interface ModelHandler {
     handle(req: express.Request, res: express.Response, next: express.NextFunction, prepareResult?: PrepareHandleResult) : Promise<void>,
 }
 
-export type ModelAuthFunction = (request: ModelRequest, resource: Resource|null, operation: Operation, database: Database) => Promise<boolean> | boolean;
+export type ModelAuthFunction = (context: ModelRequestContext, database: Database) => Promise<boolean> | boolean;
 
 export type Operation = {
     read: boolean,
@@ -132,11 +132,6 @@ export type DatabaseGetManyOptions = {
     skip?: number,
 }
 
-export type Resource = {
-    id?: string,
-    data?: any,
-}
-
 //@internal
 export interface Endpoint {
     method: HttpMethod,
@@ -147,10 +142,13 @@ export interface Endpoint {
 //@internal
 export type HttpMethod = 'get'|'post'|'put'|'patch'|'delete'; 
 
-export type ModelRequest = {
+export type ModelRequestContext = {
     auth?: any,
-    resource: Resource,
-    baseRequest: express.Request,
+    id?: string,
+    data: any,
+    oldData: any,
+    operation: Operation,
+    expressRequest: Express.Request,
 }
 
 export type AppAuthFunc = (req: Express.Request, database: Database, accept: (auth?: any) => void, reject: () => void) => Promise<void> | void;
@@ -158,8 +156,9 @@ export type AppAuthFunc = (req: Express.Request, database: Database, accept: (au
 export type PrepareHandleResult = {
     errorStatus?: number,
     error?: string,
-    newResource: Resource,
-    oldResource: Resource|null,
+    id?: string,
+    data?: any,
+    oldData?: any,
     operation: Operation,
     getManyFilters: DatabaseFilter[],
     getManySorters: DatabaseSorter[],

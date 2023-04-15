@@ -14,8 +14,8 @@ app.auth((req, database, accept, reject) => {
 
 app.model('cars', {
     userId: falk.field.string(),
-}).expose((request, resource, operation, db) => {
-    return request.auth?.userId === 'allowedUserId';
+}).expose((context, db) => {
+    return context.auth?.userId === 'allowedUserId';
 });
 
 app.start();

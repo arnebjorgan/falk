@@ -10,11 +10,9 @@ export default (model: Model, database: Database) : ModelHandler  => {
     return {
         prepareHandle: async(req: Request) => {
             const result = {
-                newResource: {
-                    id: req.params.id,
-                    data: undefined,
-                },
-                oldResource: null,
+                id: req.params.id,
+                data: undefined,
+                oldData: null,
                 operation: {
                     read: false,
                     get: false,
@@ -25,16 +23,13 @@ export default (model: Model, database: Database) : ModelHandler  => {
                     delete: true,
                 },
             } as PrepareHandleResult;
-            const oldResource = await database.collection(model.name).getById(req.params.id);
-            if(!oldResource) {
+            const oldData = await database.collection(model.name).getById(req.params.id);
+            if(!oldData) {
                 result.errorStatus = 404;
                 result.error = getNotFoundMessage(req.params.id);
             }
             else {
-                result.oldResource = {
-                    id: req.params.id,
-                    data: oldResource,
-                };
+                result.oldData = oldData;
             }
             return result;
         },

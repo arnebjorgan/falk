@@ -6,20 +6,18 @@ export default (model: Model, database: Database) : ModelHandler  => {
     const requestBodyValidator = createRequestBodyValidator(model);
     return {
         prepareHandle: async(req: Request) => {
-            const oldResource = await database.collection(model.name).getById(req.params.id);
+            const oldData = await database.collection(model.name).getById(req.params.id);
             const result = {
-                newResource: {
-                    id: req.params.id,
-                    data: req.body,
-                },
-                oldResource: oldResource ? { id: req.params.id, data: oldResource } : null,
+                id: req.params.id,
+                data: req.body,
+                oldData: oldData,
                 operation: {
                     read: false,
                     get: false,
                     list: false,
                     write: true,
-                    create: !oldResource,
-                    update: !!oldResource,
+                    create: !oldData,
+                    update: !!oldData,
                     delete: false,
                 },
             } as PrepareHandleResult;
