@@ -41,7 +41,6 @@ export interface ModelHandler {
     handle(req: express.Request, prepareResult?: PrepareHandleResult) : Promise<ModelOperationResult>,
 }
 
-//@internal
 export interface ModelOperationResult {
     status: number,
     data: any,
