@@ -35,6 +35,7 @@ const requestHandler = (handler : (model: Model, database: Database) => ModelHan
                 const handleResult = await modelHandler.handle(req, prepareResult);
                 if(model.onCreateFunction && context.operation.create && handleResult.success) {
                     try {
+                        context.id = handleResult.data._id;
                         await model.onCreateFunction(context, database);
                     } catch(e) {
                         console.error(`onCreate trigger for model "${model.name}" failed`, e);
