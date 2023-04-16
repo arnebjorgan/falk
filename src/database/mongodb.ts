@@ -85,10 +85,6 @@ export default (connectionString: string) : DatabaseFactory => {
                         return query;
                     },
                     create(data: any) {
-                        for (const [key, value] of Object.entries(models[modelName].userModel.fields)) {
-                            if(value.fieldType.autoField?.getCreateValue) data[key] = value.fieldType.autoField?.getCreateValue?.();
-                            if(value.fieldType.autoField?.getUpdateValue) data[key] = value.fieldType.autoField?.getUpdateValue?.();
-                        }
                         return models[modelName].dbModel.create(data);
                     },
                     update(id: string, data: any) {
@@ -96,19 +92,12 @@ export default (connectionString: string) : DatabaseFactory => {
                         if(!isValidId) {
                             return null;
                         }
-                        for (const [key, value] of Object.entries(models[modelName].userModel.fields)) {
-                            if(value.fieldType.autoField?.getUpdateValue) data[key] = value.fieldType.autoField?.getUpdateValue?.();
-                        };
                         return models[modelName].dbModel.findByIdAndUpdate(id, data, { new: true });
                     },
                     put(id: string, data: any) {
                         const isValidId = mongoose.isValidObjectId(id);
                         if(!isValidId) {
                             return null;
-                        }
-                        for (const [key, value] of Object.entries(models[modelName].userModel.fields)) {
-                            if(value.fieldType.autoField?.getCreateValue) data[key] = value.fieldType.autoField?.getCreateValue?.();
-                            if(value.fieldType.autoField?.getUpdateValue) data[key] = value.fieldType.autoField?.getUpdateValue?.();
                         }
                         return models[modelName].dbModel.findByIdAndUpdate(id, { ...data, _id: id }, { new: true, upsert: true, overwrite: true });
                     },

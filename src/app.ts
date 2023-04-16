@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 //import swaggerUI from 'swagger-ui-express';
 import Joi from 'joi';
-import createMemoryDatabase from './database/memory';
+import createDatabaseFactory from './database';
 import createMongodbDatabase from './database/mongodb';
 import createAuth from './auth';
 import createModel from './model';
@@ -34,12 +34,12 @@ export default () => {
         database: {
             memory() {
                 if(_databaseFactory) throw new Error('Database is configured more than once');
-                _databaseFactory = createMemoryDatabase();
+                _databaseFactory = createDatabaseFactory.memory();
             },
             mongodb(connectionString: string) {
                 if(_databaseFactory) throw new Error('Database is configured more than once');
                 Joi.assert(connectionString, Joi.string().required());
-                _databaseFactory = createMongodbDatabase(connectionString);
+                _databaseFactory = createDatabaseFactory.mongodb(connectionString);
             },
         },
         auth(authFunc: AppAuthFunc) : void {
@@ -67,7 +67,7 @@ export default () => {
         async start(port?: number) : Promise<void> {
 
             // Default database if not configured
-            if(!_databaseFactory) _databaseFactory = createMemoryDatabase();
+            if(!_databaseFactory) _databaseFactory = createDatabaseFactory.memory();
 
             // Create database
             const database = await _databaseFactory(_models);

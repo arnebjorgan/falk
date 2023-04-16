@@ -33,13 +33,21 @@ export default (model: Model, database: Database) : ModelHandler  => {
             }
             return result;
         },
-        handle: async (req: Request, res: Response, next: NextFunction) => {
+        handle: async (req: Request) => {
             const result = await database.collection(model.name).getById(req.params.id);
             if(result) {
-                res.send(result);
+                return {
+                    status: 200,
+                    data: result,
+                    success: true,
+                };
             }
             else {
-                res.status(404).send(getNotFoundMessage(req.params.id));
+                return {
+                    status: 404,
+                    data: getNotFoundMessage(req.params.id),
+                    success: false,
+                };
             }
         },
     };

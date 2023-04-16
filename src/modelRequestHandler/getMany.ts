@@ -114,7 +114,7 @@ export default (model: Model, database: Database) : ModelHandler  => {
 
             return result;
         },
-        handle: async (req: Request, res: Response, next: NextFunction, prepareHandleResult?: PrepareHandleResult) => {
+        handle: async (req: Request, prepareHandleResult?: PrepareHandleResult) => {
             let getManyOptions = {} as {
                 filters: DatabaseFilter[],
                 sorters: DatabaseSorter[],
@@ -139,8 +139,11 @@ export default (model: Model, database: Database) : ModelHandler  => {
                 });
                 
                 if(queryErrors) {
-                    res.status(400).send(queryErrors);
-                    return;
+                    return {
+                        status: 400,
+                        data: queryErrors,
+                        success: false,
+                    };
                 }
             }
             const result = await database.collection(model.name).getMany(getManyOptions.filters, {
@@ -148,7 +151,11 @@ export default (model: Model, database: Database) : ModelHandler  => {
                 limit: getManyOptions.limit,
                 skip: getManyOptions.skip,
             });
-            res.send(result);
+            return {
+                status: 200,
+                data: result,
+                success: true,
+            };
         },
     };
 };

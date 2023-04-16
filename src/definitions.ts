@@ -7,7 +7,9 @@ export interface Model {
     fields: {[key: string]: Field<Type> },
     isExposed: boolean,
     authFunction?: ModelAuthFunction,
-    expose(authFunction: ModelAuthFunction) : void,
+    onCreateFunction?: ModelTriggerFunction,
+    expose(authFunction: ModelAuthFunction) : Model,
+    onCreate(triggerFunction: ModelTriggerFunction) : Model,
 }
 
 export type Type = string|number|boolean|Date;
@@ -36,10 +38,19 @@ export interface FieldType<T> {
 
 export interface ModelHandler {
     prepareHandle(req: express.Request) : Promise<PrepareHandleResult>,
-    handle(req: express.Request, res: express.Response, next: express.NextFunction, prepareResult?: PrepareHandleResult) : Promise<void>,
+    handle(req: express.Request, prepareResult?: PrepareHandleResult) : Promise<ModelOperationResult>,
+}
+
+//@internal
+export interface ModelOperationResult {
+    status: number,
+    data: any,
+    success: boolean,
 }
 
 export type ModelAuthFunction = (context: ModelRequestContext, database: Database) => Promise<boolean> | boolean;
+
+export type ModelTriggerFunction = (context: ModelRequestContext, database: Database) => Promise<void> | void;
 
 export type Operation = {
     read: boolean,
@@ -51,7 +62,7 @@ export type Operation = {
     delete: boolean,
 }
 
-export interface DatabaseFactory { (models: Model[]) : Promise<Database> }
+export type DatabaseFactory = (models: Model[]) => Promise<Database>;
 
 /*
 const users = await db.collection('users').getMany([db.filter.eq('username', req.body.username), db.filter.eq('password', req.body.password)]);

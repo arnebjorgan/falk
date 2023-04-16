@@ -1,4 +1,4 @@
-import { ModelAuthFunction, Field, Type, Model } from './definitions';
+import { ModelAuthFunction, Field, Type, Model, ModelTriggerFunction } from './definitions';
 
 export default (name: string, fields: {[key: string]: Field<Type> }) : Model => {
     return {
@@ -8,6 +8,11 @@ export default (name: string, fields: {[key: string]: Field<Type> }) : Model => 
         expose(authFunction: ModelAuthFunction) {
             this.isExposed = true;
             this.authFunction = authFunction;
+            return this;
+        },
+        onCreate(triggerFunction: ModelTriggerFunction) {
+            this.onCreateFunction = triggerFunction;
+            return this;
         },
     };
 }

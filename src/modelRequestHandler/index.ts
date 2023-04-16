@@ -12,28 +12,35 @@ const requestHandler = (handler : (model: Model, database: Database) => ModelHan
         const modelHandler = handler(model, database);
         return async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
             try {
-                let prepareResult;
+                const prepareResult = await modelHandler.prepareHandle(req);
+                if(prepareResult.error) {
+                    res.status(prepareResult.errorStatus ? prepareResult.errorStatus : 500).send(prepareResult.error);
+                    return;
+                }
+                const context : ModelRequestContext = {
+                    auth: res.locals._falk_auth,
+                    id: prepareResult.id,
+                    data: prepareResult.data,
+                    oldData: prepareResult.oldData,
+                    operation: prepareResult.operation,
+                    expressRequest: req,
+                };
                 if(model.authFunction) {
-                    prepareResult = await modelHandler.prepareHandle(req);
-                    if(prepareResult.error) {
-                        res.status(prepareResult.errorStatus ? prepareResult.errorStatus : 500).send(prepareResult.error);
-                        return;
-                    }
-                    const context : ModelRequestContext = {
-                        auth: res.locals._falk_auth,
-                        id: prepareResult.id,
-                        data: prepareResult.data,
-                        oldData: prepareResult.oldData,
-                        operation: prepareResult.operation,
-                        expressRequest: req,
-                    };
                     const operationIsAllowed = await model.authFunction(context, database);
                     if(!operationIsAllowed) {
                         res.status(403).send('Operation forbidden');
                         return;
                     }
                 }
-                await modelHandler.handle(req, res, next, prepareResult);
+                const handleResult = await modelHandler.handle(req, prepareResult);
+                if(model.onCreateFunction && context.operation.create && handleResult.success) {
+                    try {
+                        await model.onCreateFunction(context, database);
+                    } catch(e) {
+                        console.error(`onCreate trigger for model "${model.name}" failed`, e);
+                    }
+                }
+                res.status(handleResult.status).send(handleResult.data);
             } catch(e) {
                 console.error(e);
                 res.status(500).send('An unexpected error occured');

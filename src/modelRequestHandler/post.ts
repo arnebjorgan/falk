@@ -27,9 +27,13 @@ export default (model: Model, database: Database) : ModelHandler  => {
             }
             return result;
         },
-        handle: async (req: Request, res: Response, next: NextFunction) => {
+        handle: async (req: Request) => {
             const result = await database.collection(model.name).create(req.body);
-            res.send(result);
+            return {
+                status: 200,
+                data: result,
+                success: true,
+            };
         },
     };
 };
