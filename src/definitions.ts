@@ -163,6 +163,7 @@ export type ModelRequestContext = {
     oldData: any,
     operation: Operation,
     expressRequest: Express.Request,
+    expressResponse: Express.Response,
 }
 
 export type AppAuthFunc = (req: Express.Request, database: Database, accept: (auth?: any) => void, reject: () => void) => Promise<void> | void;

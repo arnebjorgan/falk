@@ -24,6 +24,7 @@ const requestHandler = (handler : (model: Model, database: Database) => ModelHan
                     oldData: prepareResult.oldData,
                     operation: prepareResult.operation,
                     expressRequest: req,
+                    expressResponse: res,
                 };
                 if(model.authFunction) {
                     const operationIsAllowed = await model.authFunction(context, database);
