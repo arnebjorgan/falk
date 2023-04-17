@@ -7,8 +7,10 @@
     "dev:memory": "nodemon index.js memory",
     "dev:mongodb": "nodemon index.js mongodb",
     "dev:auth": "nodemon auth.js",
+    "dev:modelTriggers": "nodemon modelTriggers.js",
     "test:integration:crud": "jest integration.crud.test.js",
     "test:integration:auth": "jest integration.auth.test.js",
+    "test:integration:modelTriggers": "jest integration.modelTriggers.test.js",
     "test:watch": "jest --watch"
   },
   "keywords": [],

@@ -38,7 +38,21 @@ const requestHandler = (handler : (model: Model, database: Database) => ModelHan
                         context.id = handleResult.data._id;
                         await model.onCreateFunction(context, database);
                     } catch(e) {
-                        console.error(`onCreate trigger for model "${model.name}" failed`, e);
+                        console.error(`onCreate trigger for model "${model.name}" with id "${context.id}" failed`, e);
+                    }
+                }
+                else if(model.onUpdateFunction && context.operation.update && handleResult.success) {
+                    try {
+                        await model.onUpdateFunction(context, database);
+                    } catch(e) {
+                        console.error(`onUpdate trigger for model "${model.name}" with id "${context.id}" failed`, e);
+                    }
+                }
+                else if(model.onDeleteFunction && context.operation.delete && handleResult.success) {
+                    try {
+                        await model.onDeleteFunction(context, database);
+                    } catch(e) {
+                        console.error(`onDelete trigger for model "${model.name}" with id "${context.id}" failed`, e);
                     }
                 }
                 res.status(handleResult.status).send(handleResult.data);

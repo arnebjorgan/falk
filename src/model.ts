@@ -14,5 +14,13 @@ export default (name: string, fields: {[key: string]: Field<Type> }) : Model => 
             this.onCreateFunction = triggerFunction;
             return this;
         },
+        onUpdate(triggerFunction: ModelTriggerFunction) {
+            this.onUpdateFunction = triggerFunction;
+            return this;
+        },
+        onDelete(triggerFunction: ModelTriggerFunction) {
+            this.onDeleteFunction = triggerFunction;
+            return this;
+        },
     };
 }

@@ -8,8 +8,12 @@ export interface Model {
     isExposed: boolean,
     authFunction?: ModelAuthFunction,
     onCreateFunction?: ModelTriggerFunction,
+    onUpdateFunction?: ModelTriggerFunction,
+    onDeleteFunction?: ModelTriggerFunction,
     expose(authFunction: ModelAuthFunction) : Model,
     onCreate(triggerFunction: ModelTriggerFunction) : Model,
+    onUpdate(triggerFunction: ModelTriggerFunction) : Model,
+    onDelete(triggerFunction: ModelTriggerFunction) : Model,
 }
 
 export type Type = string|number|boolean|Date;
