@@ -1,0 +1,32 @@
+***left out***
+- auto fields (can this be a timestamp flag on model?)
+- field custom validator (should this be a model func to validate the whole object?)
+- middlewares
+- endpoints
+- swagger docs
+
+***improvements***
+- app.model generic T + field T
+- handle required/optional on model TObj
+- database types, should use generic to achieve intellisense
+- auth typing
+- logger, console.log default and able to set + errorhandling (same target or two)
+
+DOCUMENTATION API USAGE
+_skip=40
+_limit=20
+
+_sort=brand
+_sort=brand|asc
+_sort=brand|desc
+(multiple times to sort on multiple fields, order is preserved)
+
+brand=Tesla same as brand|eq=Tesla
+brand|like=Tes
+brand|ne=Ford
+horsepower|in=1,2,3
+horsepower|nin=4,5,6
+gt
+gte
+lt
+lte

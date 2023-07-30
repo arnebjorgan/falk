@@ -1,0 +1,1 @@
+export default ['eq','like','ne','gt','gte','lt','lte', 'in', 'nin'];
