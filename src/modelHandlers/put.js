@@ -1,4 +1,4 @@
-export default (model, database) => async (req, res, next) => {
+export default (model, database, logger) => async (req, res, next) => {
     try {
         const existingData = await database.model(model.name).getById(req.params.id);
 
@@ -36,20 +36,20 @@ export default (model, database) => async (req, res, next) => {
             try {
                 await model.onCreateFunc(modelRequestContext, database);
             } catch(e) {
-                console.error(`onCreate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onCreate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
             }
         }
         else if(existingData && model.onUpdateFunc) {
             try {
                 await model.onUpdateFunc(modelRequestContext, database);
             } catch(e) {
-                console.error(`onUpdate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onUpdate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
             }
         }
 
         res.status(200).send(newData);
     } catch(e) {
-        console.error(e);
+        logger.error(e);
         res.status(500).send('An unexpected error occured');
     }
 };

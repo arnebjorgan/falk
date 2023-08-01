@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUI from 'swagger-ui-express';
 import Joi from 'joi';
 import model from './model.js';
 import auth from './auth.js';
 import createDatabase from './database/index.js';
 import modelHandlers from './modelHandlers/index.js';
+import createDocs from './docs.js';
 
 export default () => {
     let app = {};
@@ -12,16 +14,17 @@ export default () => {
     app.databaseFactory = undefined;
     app.authFunc = undefined;
     app.models = [];
-    app.corsOptions = false;
+    app.corsOptions = undefined;
+    app.log = undefined;
     app.port = process.env.PORT || 8080;
 
     app.database = {
         memory() {
-            if(app.databaseFactory) throw new Error('Database is configured twice');
+            if(app.databaseFactory != undefined) throw new Error('Database is configured twice');
             app.databaseFactory = createDatabase.memory();
         },
         mongodb(connectionString) {
-            if(app.databaseFactory) throw new Error('Database is configured twice');
+            if(app.databaseFactory != undefined) throw new Error('Database is configured twice');
             Joi.assert(connectionString, Joi.string().required());
             app.databaseFactory = createDatabase.mongodb(connectionString);
         },
@@ -43,17 +46,30 @@ export default () => {
     };
 
     app.cors = (corsOptions) => {
-        if(app.corsOptions) throw new Error('App cors function is called twice');
+        if(app.corsOptions != undefined) throw new Error('App cors function is called twice');
         Joi.assert(corsOptions, Joi.required());
         app.corsOptions = corsOptions;
+    };
+
+    app.logger = (logger) => {
+        if(app.log != undefined) throw new Error('App logger function is called twice');
+        Joi.assert(logger, Joi.object({
+            info: Joi.function().required(),
+            error: Joi.function().required(),
+        }));
+        app.log = logger;
     };
 
     app.start = async (optionalPort) => {
         Joi.assert(optionalPort, Joi.number());
 
+        if(!app.log) {
+            app.log = console;
+        }
+
         // Default database if not configured
         if(!app.databaseFactory) {
-            console.info(`🔒 !!!TODO ANOTHER ICON!!! No database configured, using default memory database`);
+            app.log.info(`⚠️  No database configured, using default memory database`);
             app.databaseFactory = createDatabase.memory();
         }
 
@@ -62,24 +78,30 @@ export default () => {
 
         // Init/setup app
         const expressApp = express();
-        expressApp.use(cors(app.corsOptions));
+        expressApp.set('query parser', 'simple');
+        expressApp.use(cors(app.corsOptions || false));
         expressApp.use(express.json());
+
+        // Docs
+        const swaggerJSON = createDocs(app.models.filter(model => model.isExposed));
+        expressApp.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJSON));
+        app.log.info('🕮  Open API documentation on /docs');
 
         // Auth
         if(app.authFunc) {
-            console.info('🔒 Auth check enabled');
+            app.log.info('🔒 Auth check enabled');
             const authMiddleware = auth(app.authFunc, database);
             expressApp.use(authMiddleware);
         }
         else {
-            console.info('⚠️  No auth check');
+            app.log.info('⚠️  No auth check');
         }
 
         // Models
         app.models.forEach(model => {
             if(model.isExposed) {
-                console.info(`🌎 ${model.name} - modeled and exposed on API`);
-                const handlers = modelHandlers(model, database);
+                app.log.info(`🌎 ${model.name} - live on API`);
+                const handlers = modelHandlers(model, database, app.log);
                 expressApp.get(`/${model.name}/:id`, handlers.getById);
                 expressApp.get(`/${model.name}`, handlers.getMany);
                 expressApp.post(`/${model.name}`, handlers.post);
@@ -88,14 +110,14 @@ export default () => {
                 expressApp.delete(`/${model.name}/:id`, handlers.del);
             }
             else {
-                console.info(`📦 ${model.name} - modeled in database for internal use`);
+                app.log.info(`📦 ${model.name} - modeled in database`);
             }
         });
 
         // Startup
         const finalPort = optionalPort != undefined ? optionalPort : app.port;
         expressApp.listen(finalPort, () => {
-            console.info(`⚡ Listening at port ${finalPort}`);
+            app.log.info(`⚡ API listening at port ${finalPort}`);
         });
 
     };

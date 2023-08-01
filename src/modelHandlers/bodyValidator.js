@@ -1,12 +1,11 @@
 import Joi from 'joi';
 
-export default (model, options = { merge: false }) => {
-    let validationObject = {};
+export default (model) => {
+    let createValidationObj = {};
+    let mergeValidationObj = {};
     Object.entries(model.fields).forEach(([fieldName, field]) => {
-        let fieldValidator = field.type.validator;
-        if(field.isRequired && !options.merge) {
-            fieldValidator = fieldValidator.required();
-        }
+        createValidationObj[fieldName] = field.isRequired ? field.type.validator.required() : field.type.validator;
+        mergeValidationObj[fieldName] = field.type.validator;
         /*
         if(field.customValidator) {
             const customValidator = (val: unknown, helper: any) => {
@@ -22,11 +21,12 @@ export default (model, options = { merge: false }) => {
             fieldValidator = Joi.alternatives().try(fieldValidator, Joi.custom(customValidator)).match('all');
         }
         */
-        validationObject[fieldName] = fieldValidator;
     });
-    const validationSchema = Joi.object(validationObject);
-    return (requestBody) =>  {
-        const { error } = validationSchema.validate(requestBody, { abortEarly: false });
+    const createValidationSchema = Joi.object(createValidationObj);
+    const mergeValidationSchema = Joi.object(mergeValidationObj);
+    return (requestBody, options = { merge: false }) =>  {
+        const schema = options.merge ? mergeValidationSchema : createValidationSchema;
+        const { error } = schema.validate(requestBody, { abortEarly: false });
         return error ? error.details.map((detail) => detail.message).join(', ') : null;
     };
 };

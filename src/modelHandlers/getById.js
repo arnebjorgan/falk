@@ -1,4 +1,4 @@
-export default (model, database) => async (req, res, next) => {
+export default (model, database, logger) => async (req, res, next) => {
     try {
         const existingData = await database.model(model.name).getById(req.params.id);
         if(!existingData) {
@@ -32,7 +32,7 @@ export default (model, database) => async (req, res, next) => {
         }
         res.status(200).send(data);
     } catch(e) {
-        console.error(e);
+        logger.error(e);
         res.status(500).send('An unexpected error occured');
     }
 };

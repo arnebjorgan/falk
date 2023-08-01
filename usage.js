@@ -4,13 +4,26 @@ const app = createApp();
 
 app.cors(true);
 
+app.auth((accept, reject, expressReq, db) => {
+    if(expressReq.get('Authorization')) {
+        accept({
+            userId: expressReq.get('Authorization'),
+        });
+    }
+    else {
+        reject();
+    }
+});
+
 app.model('cars', {
     brand: field.string().required(),
     electric: field.boolean(),
     horsepower: field.number(),
-}).expose(({ operation }, database) => {
-    console.log(operation);
-    return true;
+}).expose((context, database) => {
+    if(context.auth.userId) {
+        return true;
+    }
+    return false;
 });
 
 app.start();

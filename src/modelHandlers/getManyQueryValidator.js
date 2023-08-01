@@ -31,36 +31,25 @@ export default (model) => {
                 return errors;
             }),
         })),
-        filters: Joi.array().items(Joi.object({
-            fieldName: Joi.string().valid(...fieldNames).required().error(errors => {
-                errors.forEach(err => {
-                    err.message = `filter field ${err.value} does not exist, must be one of [${fieldNames.join(', ')}]`;
-                });
-                return errors;
-            }),
-            operator: Joi.string().valid(...validFieldOperators).required().error(errors => {
-                errors.forEach(err => {
-                    err.message = `filter operator ${err.value} does not exist, must be one of [${validFieldOperators.join(', ')}]`;
-                });
-                return errors;
-            }),
-            value: Joi.alternatives().conditional('operator', {
-                is: Joi.alternatives('in', 'nin'),
-                then: Joi.array().items('TODO-field validator'),
-                otherwise: 'TODO-field validator',
-            }).error(errors => {
-                errors.forEach(err => {
-                    /*
-                    const filterObjectCandidate = err.state.ancestors?.[1];
-                    const fieldName = filterObjectCandidate.key ? filterObjectCandidate.key : filterObjectCandidate?.[0].key;
-                    const fieldEntry = Object.entries(model.fields).find(([key, field]) => key === fieldName);
-                    err.message = `${fieldName ? `${fieldName} ` : ''}filter ${fieldEntry ? `must be a ${fieldEntry[1].fieldType.typeString}` : 'is the wrong type'}, was ${err.value}`;
-                    TODO error message
-                    */
-                });
-                return errors;
-            }),
-        })),
+        filters: Joi.array().items(
+            Joi.alternatives(
+                ...fieldNames.map(fieldName => {
+                    const fieldValidator = model.fields[fieldName].type.validator;
+                    return {
+                        fieldName: Joi.string().valid(fieldName),
+                        operator: Joi.string().valid(...validFieldOperators),
+                        value: Joi.alternatives(fieldValidator.required(), Joi.array().items(fieldValidator.required())),
+                    };
+                }),
+            ),
+        ),
+        /*
+        const filterObjectCandidate = err.state.ancestors?.[1];
+        const fieldName = filterObjectCandidate.key ? filterObjectCandidate.key : filterObjectCandidate?.[0].key;
+        const fieldEntry = Object.entries(model.fields).find(([key, field]) => key === fieldName);
+        err.message = `${fieldName ? `${fieldName} ` : ''}filter ${fieldEntry ? `must be a ${fieldEntry[1].fieldType.typeString}` : 'is the wrong type'}, was ${err.value}`;
+        TODO error message
+        */
     };
     
     const validationSchema = Joi.object(validationObject);

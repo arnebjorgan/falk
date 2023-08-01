@@ -1,4 +1,4 @@
-export default (model, database) => async (req, res, next) => {
+export default (model, database, logger) => async (req, res, next) => {
     try {
         const modelRequestContext = {
             auth: res.locals._falk_auth,
@@ -33,13 +33,13 @@ export default (model, database) => async (req, res, next) => {
             try {
                 await model.onCreateFunc(modelRequestContext, database);
             } catch(e) {
-                console.error(`onCreate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onCreate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
             }
         }
 
         res.status(200).send(newData);
     } catch(e) {
-        console.error(e);
+        logger.error(e);
         res.status(500).send('An unexpected error occured');
     }
 };

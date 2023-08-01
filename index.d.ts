@@ -16,11 +16,12 @@ interface TypeMap {
 
 type App = {
     cors: (corsOptions: any) => void,
+    logger: (logger: { info: Function, error: Function}) => void,
     database: {
         memory: () => void,
         mongodb: (connectionString: string) => void,
     },
-    auth: (appAuthFunc: (accept: (auth: any) => void, reject: () => void) => Promise<void>, expressReq: Express.Request, db: Database) => Promise<void>,
+    auth: (appAuthFunc: (accept: (auth: any) => void, reject: () => void, expressReq: Express.Request, db: Database) => Promise<void>) => Promise<void>,
     model<T extends Record<keyof T, { type: { typeString: keyof TypeMap } }>>(modelName: string, data: T) : Model<{ [K in keyof T]: TypeMap[T[K]['type']['typeString']] }>,
     start: (optionalPort: number|undefined) => Promise<void>,
 };
