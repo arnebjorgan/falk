@@ -8,8 +8,8 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc",
-    "prepare": "npm run build"
+    "run-test-api": "node ./tests/test-api.js",
+    "test": "vitest run --dir tests"
   },
   "keywords": [
     "api",
@@ -31,5 +31,10 @@
     "mongodb-memory-server": "^8.13.0",
     "mongoose": "^7.4.1",
     "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "axios": "^1.4.0",
+    "dayjs": "^1.11.9",
+    "vitest": "^0.34.1"
   }
 }

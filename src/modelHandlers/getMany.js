@@ -15,11 +15,11 @@ export default (model, database, logger)  => {
             };
 
             if(req.query._limit != undefined) {
-                getManyOptions.limit = parseInt(req.query._limit);
+                getManyOptions.limit = parseFloat(req.query._limit);
             }
 
             if(req.query._skip != undefined) {
-                getManyOptions.skip = parseInt(req.query._skip);
+                getManyOptions.skip = parseFloat(req.query._skip);
             }
 
             if(req.query._sort != undefined) {
@@ -44,9 +44,9 @@ export default (model, database, logger)  => {
                 const queryKeyOperator = validFilterOperators.find(operator => queryKey.endsWith('|' + operator));
                 const finalOperator = queryKeyOperator || 'eq';
                 const fieldName = queryKeyOperator ? queryKey.replace('|' + queryKeyOperator, '') : queryKey;
-                const parser = model.fields[fieldName].type.parseFromQuery;
+                const parser = model.fields[fieldName]?.type.parseFromQuery;
                 const queryValue = req.query[queryKey];
-                const parsedQueryValue = ['in', 'nin'].includes(finalOperator) ? queryValue.split(',').map(parser) : parser(queryValue);
+                const parsedQueryValue = !parser ? queryValue : ['in', 'nin'].includes(finalOperator) ? queryValue.split(',').map(parser) : parser(queryValue);
                 getManyOptions.filters.push({
                     fieldName,
                     operator: finalOperator,

@@ -2,7 +2,7 @@ export default (model, database, logger) => async (req, res, next) => {
     try {
         const existingData = await database.model(model.name).getById(req.params.id);
         if(!existingData) {
-            return res.status(404).send(`Could not find document with id ${req.params.id}`);
+            return res.status(404).send(`Could not find ${model.name} with id ${req.params.id}`);
         }
 
         const modelRequestContext = {
