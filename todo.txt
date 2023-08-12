@@ -1,9 +1,0 @@
-*** INTELLISENSE IMPROVEMENTS ***
-- app.model generic T + field T
-- handle required/optional on model TObj
-- database types, should use generic to achieve intellisense
-- auth typing
-
-*** LEFT OUT ***
-- auto fields (can this be a timestamp flag on model?)
-- field custom validator (should this be a model func to validate the whole object?)
