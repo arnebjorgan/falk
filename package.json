@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "axios": "^1.4.0",
-    "dayjs": "^1.11.9",
     "vitest": "^0.34.1"
   }
 }

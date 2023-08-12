@@ -1,9 +1,10 @@
 import { beforeAll, expect, test } from 'vitest';
 import axios from 'axios';
-import dayjs from 'dayjs';
+
+const baseURL = 'http://localhost:5000';
 
 const server = axios.create({
-    baseURL: 'http://localhost:5000',
+    baseURL,
     headers: {
       Authorization: '123',
     },
@@ -49,6 +50,10 @@ beforeAll(async () => {
     await Promise.all(carsResponse.data.map(car => server.delete(`/cars/${car._id}`)));
     const allowResponse = await server.get('/allow-bar-and-reads');
     await Promise.all(allowResponse.data.map(allow => server.delete(`/allow-bar-and-reads/${allow._id}`)));
+    const triggerLogsResponse = await server.get('/trigger_logs');
+    await Promise.all(triggerLogsResponse.data.map(triggerLog => server.delete(`/trigger_logs/${triggerLog._id}`)));
+    const triggersResponse = await server.get('/triggers');
+    await Promise.all(triggersResponse.data.map(trigger => server.delete(`/triggers/${trigger._id}`)));
 });
 
 test('docs - it should return 200 on /docs', async () => {
@@ -755,4 +760,93 @@ test('getMany - invalid boolean nin filter', async () => {
         expect(e.response.status).toBe(400);
         expect(e.response.data).toBe(`electric filter must be a boolean, was foo, electric filter must be a boolean, was bar`);
     }
+});
+
+test('app auth reject - should return 401', async () => {
+    try {
+        await axios.get(`${baseURL}/cars`);
+        fail('It should be rejected when authorization header (userid) is missing');
+    } catch(e) {
+        expect(e.response.status).toBe(401);
+        expect(e.response.data).toBe('User is not authorized');
+    }
+});
+
+test('model operation rejected, wrong userid - should return 403', async () => {
+    try {
+        await axios.get(`${baseURL}/cars`, { headers: { Authorization: 'not allowed userid' }});
+        fail('It should fail when using not allowed userId');
+    } catch(e) {
+        expect(e.response.status).toBe(403);
+        expect(e.response.data).toBe('Operation is forbidden');
+    }
+});
+
+test('model.onCreateTrigger - post', async () => {
+    const createResponse = await server.post('/triggers');
+    const triggerLogResponse = await server.get(`/trigger_logs?trigger_id=${createResponse.data._id}&trigger_type=create`);
+    expect(triggerLogResponse.status).toBe(200);
+    expect(triggerLogResponse.data.length).toBe(1);
+});
+
+test('model.onCreateTrigger - put', async () => {
+    const putResponse = await server.put(`/triggers/643dafe39dd2cfc9f006b064`);
+    const triggerLogResponse = await server.get(`/trigger_logs?trigger_id=${putResponse.data._id}&trigger_type=create`);
+    expect(triggerLogResponse.status).toBe(200);
+    expect(triggerLogResponse.data.length).toBe(1);
+});
+
+test('model.onUpdateTrigger - put', async () => {
+    const createResponse = await server.post('/triggers');
+    await server.put(`/triggers/${createResponse.data._id}`);
+    const triggerLogResponse = await server.get(`/trigger_logs?trigger_id=${createResponse.data._id}&trigger_type=update`);
+    expect(triggerLogResponse.status).toBe(200);
+    expect(triggerLogResponse.data.length).toBe(1);
+});
+
+test('model.onUpdateTrigger - patch', async () => {
+    const createResponse = await server.post('/triggers');
+    await server.patch(`/triggers/${createResponse.data._id}`);
+    const triggerLogResponse = await server.get(`/trigger_logs?trigger_id=${createResponse.data._id}&trigger_type=update`);
+    expect(triggerLogResponse.status).toBe(200);
+    expect(triggerLogResponse.data.length).toBe(1);
+});
+
+test('model.onDeleteTrigger - delete', async () => {
+    const createResponse = await server.post('/triggers');
+    await server.delete(`/triggers/${createResponse.data._id}`);
+    const triggerLogResponse = await server.get(`/trigger_logs?trigger_id=${createResponse.data._id}&trigger_type=delete`);
+    expect(triggerLogResponse.status).toBe(200);
+    expect(triggerLogResponse.data.length).toBe(1);
+});
+
+test('custom endpoint - get', async () => {
+    const response = await server.get('/custom_endpoint');
+    expect(response.status).toBe(200);
+});
+
+test('custom endpoint - post', async () => {
+    const response = await server.post('/custom_endpoint');
+    expect(response.status).toBe(200);
+});
+
+test('custom endpoint - put', async () => {
+    const response = await server.put('/custom_endpoint');
+    expect(response.status).toBe(200);
+});
+
+test('custom endpoint - patch', async () => {
+    const response = await server.patch('/custom_endpoint');
+    expect(response.status).toBe(200);
+});
+
+test('custom endpoint - delete', async () => {
+    const response = await server.delete('/custom_endpoint');
+    expect(response.status).toBe(200);
+});
+
+test('middleware', async () => {
+    const response = await axios.get(`${baseURL}/cars`, { headers: { Authorization: 'test-middleware' } });
+    expect(response.status).toBe(200);
+    expect(response.data.message).toBe('Message from middleware');
 });

@@ -35,7 +35,7 @@ export default (model, database, logger) => async (req, res, next) => {
             try {
                 await model.onDeleteFunc(modelRequestContext, database);
             } catch(e) {
-                logger.error(`onDelete trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onDelete trigger for model "${model.name}" with id ${req.params.id} failed`, e);
             }
         }
 

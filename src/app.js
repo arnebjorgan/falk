@@ -48,16 +48,10 @@ export default () => {
         return newModel;
     };
 
-    app.middlewares = (handler) => {
+    app.middleware = (handler) => {
         Joi.assert(handler, Joi.function().required());
         app.middlewares.push(handler);
     };
-
-    app.get = createEndpoint('get'),
-    app.post = createEndpoint('post'),
-    app.put = createEndpoint('put'),
-    app.patch = createEndpoint('patch'),
-    app.delete = createEndpoint('delete'),
 
     function createEndpoint(httpMethod) {
         return function(path, handler) {
@@ -70,6 +64,12 @@ export default () => {
             });
         };
     }
+
+    app.get = createEndpoint('get'),
+    app.post = createEndpoint('post'),
+    app.put = createEndpoint('put'),
+    app.patch = createEndpoint('patch'),
+    app.delete = createEndpoint('delete'),
 
     app.cors = (corsOptions) => {
         if(app.corsOptions != undefined) throw new Error('App cors function is called twice');
@@ -125,7 +125,7 @@ export default () => {
 
         // Middleware
         app.middlewares.forEach(handler => {
-            app.use(createEndpointHandler(handler, database));
+            expressApp.use(createEndpointHandler(handler, database));
         });
         if(app.middlewares.length) {
             console.info(`☑ Registered ${app.middlewares.length} middlewares`);
@@ -150,7 +150,7 @@ export default () => {
 
         // Custom endpoints
         app.customEndpoints.forEach(endpoint => {
-            app[endpoint.httpMethod](endpoint.path, createEndpointHandler(endpoint.handler, database));
+            expressApp[endpoint.httpMethod](endpoint.path, createEndpointHandler(endpoint.handler, database));
             console.info(`☑ Custom endpoint ${endpoint.httpMethod} ${endpoint.path}`);
         });
 

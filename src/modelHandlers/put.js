@@ -36,14 +36,14 @@ export default (model, database, logger) => async (req, res, next) => {
             try {
                 await model.onCreateFunc(modelRequestContext, database);
             } catch(e) {
-                logger.error(`onCreate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onCreate trigger for model "${model.name}" with id ${req.params.id} failed`, e);
             }
         }
         else if(existingData && model.onUpdateFunc) {
             try {
                 await model.onUpdateFunc(modelRequestContext, database);
             } catch(e) {
-                logger.error(`onUpdate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onUpdate trigger for model "${model.name}" with id ${req.params.id} failed`, e);
             }
         }
 

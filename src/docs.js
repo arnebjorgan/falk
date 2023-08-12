@@ -201,7 +201,7 @@ const getPaths = (models, customEndpoints) => {
     });
     customEndpoints.forEach(endpoint => {
         if(!result[endpoint.path]) result[endpoint.path] = {};
-        result[endpoint.path][endpoint.method] = {
+        result[endpoint.path][endpoint.httpMethod] = {
             tags: ['Other endpoints'],
             summary: `Other endpoints`,
             consumes: ['application/json'],

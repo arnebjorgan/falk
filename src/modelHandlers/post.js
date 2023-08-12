@@ -2,7 +2,7 @@ export default (model, database, logger) => async (req, res, next) => {
     try {
         const modelRequestContext = {
             auth: res.locals._falk_auth,
-            id: req.params.id,
+            id: undefined,
             data: req.body,
             oldData: undefined, 
             operation: {
@@ -29,11 +29,13 @@ export default (model, database, logger) => async (req, res, next) => {
 
         const newData = await database.model(model.name).create(req.body);
 
+        modelRequestContext.id = newData._id;
+
         if(model.onCreateFunc) {
             try {
                 await model.onCreateFunc(modelRequestContext, database);
             } catch(e) {
-                logger.error(`onCreate trigger for model "${model.name}" with id ${request.params.id} failed`, e);
+                logger.error(`onCreate trigger for model "${model.name}" with id ${modelRequestContext.id} failed`, e);
             }
         }
 
