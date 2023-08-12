@@ -1,12 +1,9 @@
 {
   "name": "falk",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Model based API development for Node.js",
   "main": "index.js",
   "type": "module",
-  "files": [
-    "dist/**/*"
-  ],
   "scripts": {
     "run-test-api": "node ./tests/test-api.js",
     "test": "vitest run --dir tests"
