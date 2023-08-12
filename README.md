@@ -4,17 +4,17 @@
   <p align="center">
     🤖 <a href="https://falkjs.com">https://falkjs.com</a> 🤖
     <br/>
-    <h3 align="center">Rapid model-based API development</h3>
+    <h3 align="center">Model based API development for Node.js</h3>
   </p>
 </p>
 <br/>
 <div align="center">
-    <div>📦 Database agnostic</div>
-    <div>🔒 Built-in auth</div>
-    <div>📄 Automatic Open API docs</div>
-    <div>⚡ Minimal configuration</div>
-    <div>✔️ High quality API</div>
-    <div>🔑 Typesafe development</div>
+  <div>📄 Automatic Open API docs</div>
+  <div>🔒 Powerful auth control</div>
+  <div>📦 Database agnostic</div>
+  <div>🔑 Typesafe development</div>  
+  <div>✔️ Consistent quality API</div>  
+  <div>⚡ Model triggers</div>
   </div>
 </div>
 <br/>

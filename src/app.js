@@ -6,6 +6,7 @@ import model from './model.js';
 import auth from './auth.js';
 import createDatabase from './database/index.js';
 import modelHandlers from './modelHandlers/index.js';
+import createEndpointHandler from './endpointHandler.js';
 import createDocs from './docs.js';
 
 export default () => {
@@ -14,6 +15,8 @@ export default () => {
     app.databaseFactory = undefined;
     app.authFunc = undefined;
     app.models = [];
+    app.middlewares = [];
+    app.customEndpoints = [];
     app.corsOptions = undefined;
     app.log = undefined;
     app.port = process.env.PORT || 8080;
@@ -44,6 +47,29 @@ export default () => {
         app.models.push(newModel);
         return newModel;
     };
+
+    app.middlewares = (handler) => {
+        Joi.assert(handler, Joi.function().required());
+        app.middlewares.push(handler);
+    };
+
+    app.get = createEndpoint('get'),
+    app.post = createEndpoint('post'),
+    app.put = createEndpoint('put'),
+    app.patch = createEndpoint('patch'),
+    app.delete = createEndpoint('delete'),
+
+    function createEndpoint(httpMethod) {
+        return function(path, handler) {
+            Joi.assert(path, Joi.string().required());
+            Joi.assert(handler, Joi.function().required());
+            app.customEndpoints.push({
+                httpMethod,
+                path,
+                handler,
+            });
+        };
+    }
 
     app.cors = (corsOptions) => {
         if(app.corsOptions != undefined) throw new Error('App cors function is called twice');
@@ -83,7 +109,7 @@ export default () => {
         expressApp.use(express.json());
 
         // Docs
-        const swaggerJSON = createDocs(app.models.filter(model => model.isExposed));
+        const swaggerJSON = createDocs(app.models.filter(model => model.isExposed), app.customEndpoints);
         expressApp.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJSON));
         app.log.info('🕮  Open API documentation on /docs');
 
@@ -95,6 +121,14 @@ export default () => {
         }
         else {
             app.log.info('⚠️  No auth check');
+        }
+
+        // Middleware
+        app.middlewares.forEach(handler => {
+            app.use(createEndpointHandler(handler, database));
+        });
+        if(app.middlewares.length) {
+            console.info(`☑ Registered ${app.middlewares.length} middlewares`);
         }
 
         // Models
@@ -112,6 +146,12 @@ export default () => {
             else {
                 app.log.info(`📦 ${model.name} - modeled in database`);
             }
+        });
+
+        // Custom endpoints
+        app.customEndpoints.forEach(endpoint => {
+            app[endpoint.httpMethod](endpoint.path, createEndpointHandler(endpoint.handler, database));
+            console.info(`☑ Custom endpoint ${endpoint.httpMethod} ${endpoint.path}`);
         });
 
         // Startup

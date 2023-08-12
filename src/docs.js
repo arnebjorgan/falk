@@ -1,8 +1,8 @@
-export default (models) => {
+export default (models, customEndpoints) => {
     return {
         swagger: '2.0',
-        tags: models.map(model => model.name),
-        paths: getPaths(models),
+        tags: models.map(model => model.name).concat(customEndpoints.length ? ['Other endpoints'] : []),
+        paths: getPaths(models, customEndpoints),
         definitions: models.reduce((acc, model) => {
             acc[model.name] = {
                 type: 'object',
@@ -20,7 +20,7 @@ export default (models) => {
     };
 };
 
-const getPaths = (models) => {
+const getPaths = (models, customEndpoints) => {
     let result = {};
     models.forEach((model) => {
         result[`/${model.name}`] = {
@@ -46,6 +46,12 @@ const getPaths = (models) => {
                     400: {
                         description: 'Bad Request',
                     },
+                    401: {
+                        description: 'Unauthorized',
+                    },
+                    403: {
+                        description: 'Forbidden',
+                    },
                     500: {
                         description: 'Internal Server Error',
                     },
@@ -60,6 +66,12 @@ const getPaths = (models) => {
                 responses: {
                     200: {
                         description: 'OK',
+                    },
+                    401: {
+                        description: 'Unauthorized',
+                    },
+                    403: {
+                        description: 'Forbidden',
                     },
                     500: {
                         description: 'Internal Server Error',
@@ -77,6 +89,12 @@ const getPaths = (models) => {
                 responses: {
                     200: {
                         description: 'OK',
+                    },
+                    401: {
+                        description: 'Unauthorized',
+                    },
+                    403: {
+                        description: 'Forbidden',
                     },
                     404: {
                         description: 'Not Found',
@@ -108,8 +126,11 @@ const getPaths = (models) => {
                     400: {
                         description: 'Bad Request',
                     },
-                    404: {
-                        description: 'Not Found',
+                    401: {
+                        description: 'Unauthorized',
+                    },
+                    403: {
+                        description: 'Forbidden',
                     },
                     500: {
                         description: 'Internal Server Error',
@@ -138,6 +159,12 @@ const getPaths = (models) => {
                     400: {
                         description: 'Bad Request',
                     },
+                    401: {
+                        description: 'Unauthorized',
+                    },
+                    403: {
+                        description: 'Forbidden',
+                    },
                     404: {
                         description: 'Not Found',
                     },
@@ -156,12 +183,39 @@ const getPaths = (models) => {
                     200: {
                         description: 'OK',
                     },
+                    401: {
+                        description: 'Unauthorized',
+                    },
+                    403: {
+                        description: 'Forbidden',
+                    },
                     404: {
                         description: 'Not Found',
                     },
                     500: {
                         description: 'Internal Server Error',
                     },
+                },
+            },
+        };
+    });
+    customEndpoints.forEach(endpoint => {
+        if(!result[endpoint.path]) result[endpoint.path] = {};
+        result[endpoint.path][endpoint.method] = {
+            tags: ['Other endpoints'],
+            summary: `Other endpoints`,
+            consumes: ['application/json'],
+            produces: ['application/json'],
+            parameters: [],
+            responses: {
+                200: {
+                    description: 'OK',
+                },
+                400: {
+                    description: 'Bad Request',
+                },
+                500: {
+                    description: 'Internal Server Error',
                 },
             },
         };

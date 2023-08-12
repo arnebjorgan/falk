@@ -1,7 +1,7 @@
 {
   "name": "falk",
   "version": "0.25.0",
-  "description": "Rapid model-based API development",
+  "description": "Model based API development for Node.js",
   "main": "index.js",
   "type": "module",
   "files": [

@@ -23,8 +23,16 @@ type App = {
     },
     auth: (appAuthFunc: (accept: (auth: any) => void, reject: () => void, expressReq: Express.Request, db: Database) => Promise<void>) => Promise<void>,
     model<T extends Record<keyof T, { type: { typeString: keyof TypeMap } }>>(modelName: string, data: T) : Model<{ [K in keyof T]: TypeMap[T[K]['type']['typeString']] }>,
+    middleware: (handler: EndpointHandler) => void,
+    get: (path: string, handler: EndpointHandler) => void,
+    post: (path: string, handler: EndpointHandler) => void,
+    put: (path: string, handler: EndpointHandler) => void,
+    patch: (path: string, handler: EndpointHandler) => void,
+    delete: (path: string, handler: EndpointHandler) => void,
     start: (optionalPort: number|undefined) => Promise<void>,
 };
+
+type EndpointHandler = (req: Express.Request, res: Express.Response, next: Function, db: Database) => Promise<void>
 
 type Model<T> = {
     expose: (modelAuthFunc: (context: ModelRequestContext<T>, db: Database) => Promise<boolean>) => Model<T>,
